@@ -14,6 +14,8 @@ public class TicTacToeAI {
     initTab();
   }
 
+  //Cette map permet de savoir pour chaque position s'il est dosponible ou s'il y a un X ou O.
+  //Elle va être modifier après chaque coup.
   public HashMap initTab(){
     char[] codeCol = {'A','B', 'C', 'D',  'E', 'F', 'G', 'H', 'I'};
     HashMap<String, Integer> listeCases = new HashMap<String, Integer>();
