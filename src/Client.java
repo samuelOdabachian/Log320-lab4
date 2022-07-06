@@ -2,6 +2,8 @@ import java.io.*;
 import java.net.*;
 
 class Client {
+
+  private static boolean IS_AI_ACTIVE = false;
   public static void main(String[] args) {
 
     Socket MyClient;
@@ -9,9 +11,10 @@ class Client {
     BufferedOutputStream output;
     int[][] board = new int[9][9];
 
+    TicTacToeAI notreAI = new TicTacToeAI();
+
     try {
       MyClient = new Socket("localhost", 8888);
-
       input = new BufferedInputStream(MyClient.getInputStream());
       output = new BufferedOutputStream(MyClient.getOutputStream());
       BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
@@ -43,7 +46,7 @@ class Client {
 
           System.out.println("Nouvelle partie! Vous jouer blanc, entrez votre premier coup : ");
           String move = null;
-          move = console.readLine();
+          move = "A1"; // AJOUT
           output.write(move.getBytes(), 0, move.length());
           output.flush();
         }
@@ -83,7 +86,8 @@ class Client {
           System.out.println("Dernier coup :" + s);
           System.out.println("Entrez votre coup : ");
           String move = null;
-          move = console.readLine();
+          // move = console.readLine();
+          move = (IS_AI_ACTIVE) ? notreAI.jouer(s) : console.readLine();
           output.write(move.getBytes(), 0, move.length());
           output.flush();
 
@@ -92,7 +96,7 @@ class Client {
         if (cmd == '4') {
           System.out.println("Coup invalide, entrez un nouveau coup : ");
           String move = null;
-          move = console.readLine();
+          move = (IS_AI_ACTIVE) ? notreAI.jouer() : console.readLine(); //AJOUT
           output.write(move.getBytes(), 0, move.length());
           output.flush();
 
