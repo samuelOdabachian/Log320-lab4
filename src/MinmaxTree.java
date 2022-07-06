@@ -5,5 +5,12 @@
 //Il faut reécrire dans le tree les positions et options possible dans le case 3x3 envisager. 
 //Le tree envoie le meilleur choix possible après des calcules internes.
 public class MinmaxTree {
-    
+
+    private HashMap<> etatCases;
+
+
+
+    public void setEtatCases(){
+
+    }
 }
