@@ -15,6 +15,8 @@ public class TicTacToeAI {
   private HashMap<String, Integer> _grilleJeu= new HashMap<String, Integer>();
   private static final char[] CODE_COL = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I' };
   // private static final ArrayList<Character> CODE_COL_2 = new ArrayList<Character>{ 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I' };
+  
+
 
   public TicTacToeAI() {
     this._grilleJeu = initTab();
@@ -104,4 +106,10 @@ public class TicTacToeAI {
     String[][] tabCodes = {tabLettre, tabNumero};
     return tabCodes;
   }
+
+  public HashMap getGrille(){
+    return this._grilleJeu;
+  }
+
+
 }

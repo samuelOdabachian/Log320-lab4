@@ -9,6 +9,7 @@ public class MinmaxTree {
     private HashMap <String, Integer> etatCases;
     int[] cadre;
     String symboleDuJoeur;//X ou O.
+    Node rootNode;
 
     //Les 3 cadres de bas sur le plateau de jeu
     private String[] cadreBasGauche = {"A1","A2","A3","B1","B2","B3","C1","C2","C3"};
@@ -34,7 +35,7 @@ public class MinmaxTree {
     public void creatTree(int[] interval, HashMap <String, Integer> etatCases){
         String positions[] = processInterval(interval);
         this.etatCases = etatCases;  
-        Node rootNode = new Node();
+        rootNode = new Node();
         Integer value;
         //for loop pour interoger le hashmap pour avoir info sur le cadre en question.
         for(int i = 0; i < positions.length; i++ ){
@@ -44,8 +45,7 @@ public class MinmaxTree {
         creatChildren(rootNode);
     }
 
-    //Créer les enfants du node, les enfant sont des prediction des cas possible a partire du contexte actuel.
-    //Tout les scenario possible doivent être creer. Donc autant d'enfant que de scenario possible.
+    //Pour chaque case vide, créer un scenario possible avec le choix fait.
     private void creatChildren(Node node){
         //Le cadre actuel dans le noed est un Hashmap
         for (HashMap.Entry<String, Integer> entry : node.getMap().entrySet()) {
@@ -56,17 +56,26 @@ public class MinmaxTree {
                 node.creatAChild(key, value);
             }
         }
+        //Pour chaque prediction de tour du joueur, changer le symmbole pour essayer de prédire l'action de l'adversaire.
+        if(symboleDuJoeur.equals("X")){
+            symboleDuJoeur = "Y";
+        }else if(symboleDuJoeur.equals("Y")){
+            symboleDuJoeur = "X";
+        }
+        //while this node has children, call this function recursivvely.
+        for(int i = 0; i < node.children.size(); i++ ){
+            creatChildren(node.children.get(i));
+        }
+        
     }
-    //to add into the node the positions.
-    public void addIntoNode(){
-
-    }
+    
 
     //recois la case et retourn l'identification de la position corespondant à la case.
     public String genererMeilleurDecision(int[] cadre){
-        
-        
-        return "Test1";
+        //Random number in the interval of the root node children arraylist.
+         int index = (int) Math.random() % rootNode.children.size();
+         
+         return rootNode.children.get(index).desision;
     }
 
     public void setEtatCases(HashMap <String, Integer> etatCases){

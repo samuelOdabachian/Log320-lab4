@@ -4,15 +4,24 @@ import java.net.*;
 class Client {
 
   private static boolean IS_AI_ACTIVE = false;
+
+  
   public static void main(String[] args) {
 
     // Socket MyClient;
     // BufferedInputStream input;
     // BufferedOutputStream output;
     // int[][] board = new int[9][9];
-
+    int[] testCase = {3,2};
     TicTacToeAI notreAI = new TicTacToeAI();
     notreAI.jouer("F2");
+
+    MinmaxTree minmaxTree = new MinmaxTree();
+    //try to printout the tree during the creation instead of making a new methode.
+    minmaxTree.creatTree(testCase, notreAI.getGrille());
+
+    
+
 
     /*try {
       MyClient = new Socket("localhost", 8888);

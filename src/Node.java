@@ -6,8 +6,10 @@ public class Node {
 
     //A faire le alpha et le beta.
     private HashMap <String, Integer> etatCadre;
-    private ArrayList <Node> children;
+    ArrayList <Node> children;
     private String symboleDuJoueurActuel; // X ou Y.
+    //The decision of the current potential scenario;
+    String desision;
 
     public Node(){
         etatCadre = new HashMap<>();
@@ -22,6 +24,7 @@ public class Node {
     public void creatAChild(String key, Integer value){
         Node n = new Node(etatCadre);
         n.replace(key, value);
+        n.desision = key;
         children.add(n);
 
         
