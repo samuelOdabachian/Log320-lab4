@@ -13,21 +13,19 @@ public class TicTacToeAI {
 
   private String _dernierCoupAdversaire;
   private HashMap<String, Integer> _grilleJeu= new HashMap<String, Integer>();
-  private static final char[] CODE_COL = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I' };
-  // private static final ArrayList<Character> CODE_COL_2 = new ArrayList<Character>{ 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I' };
-  
-
+  private static final String COLUMN_IDENTIFIERS = "ABCDEFGHI";
+  private int _joueurId = -1; //can be 2 for O or 4 for X
 
   public TicTacToeAI() {
-    this._grilleJeu = initTab();
+    this._grilleJeu = this.initTab();
   }
 
-  public HashMap initTab() {
+  public HashMap<String, Integer> initTab() {
 
     HashMap<String, Integer> listeCases = new HashMap<String, Integer>();
 
     for (int i = 1; i <= 9; i++) {
-      String codeCase = Character.toString(CODE_COL[i - 1]);
+      String codeCase = Character.toString( COLUMN_IDENTIFIERS.charAt(i-1) );
       for (int j = 1; j <= 9; j++) {
         listeCases.put(codeCase + j, 0);
       }
@@ -41,37 +39,78 @@ public class TicTacToeAI {
     return "A2";
   }
 
-  public String jouer(String dernierCoupAdversaire) {
+  public String jouer(int joueurId, String dernierCoupAdversaire) {
+    
     this._dernierCoupAdversaire = dernierCoupAdversaire;
-    System.out.println("Notre AI a joué. Le coup de l'adversaire était " + this._dernierCoupAdversaire);
-    int[] caseAction = determinerCaseAction();
-    determinerIntervalCaseAction(caseAction);
+    this._joueurId = joueurId;
+
+    int adversaireId = joueurId == 2 ? 4 : 2;
+
+    System.out.println("Notre AI va jouer.");
+    System.out.println(" - Nous somme: "+this.obtenirSigneJoueur(joueurId));
+    System.out.println(" - Le coup de l'adversaire était " + this._dernierCoupAdversaire);
+
+    int[] caseAction = determinerProchainCadreValide(dernierCoupAdversaire);
+    
+    this._grilleJeu.put(dernierCoupAdversaire, adversaireId);
+
+    // MinmaxTree minmaxTree = new MinmaxTree();
+    // minmaxTree.creatTree(caseAction, this._grilleJeu);
     return "A1";
   }
 
-  //Envoyer tableau de taille 2
-  //Envoyer  tableau string [[G,H,I],[4,5,6]]
-  public int[] determinerCaseAction() {
+  private String obtenirSigneJoueur(int joueurId) {
+    String signe = "";
 
-    char col = this._dernierCoupAdversaire.charAt(0);
-    int colIdx = 0;
-    char row = this._dernierCoupAdversaire.charAt(1);
-    int rowIdx = Character.getNumericValue(row) % 3;
-
-    System.out.println("ProchainCoup, "+ col+", "+row);
-
-    for (int i = 0; i < CODE_COL.length; i++) {
-      if (col == CODE_COL[i]) {
-        colIdx = (i+1) % 3;
-      }
+    switch (joueurId) {
+      case 2:
+        signe = "O";
+        break;
+      case 4:
+        signe = "X";
+        break;
+      default:
+        signe = "ERREUR";
+        break;
     }
 
-    colIdx = colIdx==0 ? 3 : colIdx;
-    rowIdx = rowIdx==0 ? 3 : rowIdx;
+    return signe;
+  }
 
-    System.out.println("Prochain coup sera dans case générale: "+ colIdx + " :: "+ rowIdx);
+  /**
+   * Deduit le prochain cadre dans lequel le joueur peut jouer
+   * a partir du dernier coup de l'adversaire.
+   * @param dernierCoupAdversaire derniere case dans lequel l'adversaire a joue (ex: F2)
+   * @return un tableau de taille 2 indiquant dans quelle cadre le joueur pourra jouer.
+   * (ex: {3,2} dans lequel 3 est l'index de la colonne de la grille et 2 l'index de la rangee)
+   */
+  public int[] determinerProchainCadreValide( String dernierCoupAdversaire) {
+
+    char col = dernierCoupAdversaire.charAt(0);
+    int  colIdx = this.ajusterIndexAGrilleJeu( COLUMN_IDENTIFIERS.indexOf(col)+1 ); 
+
+    char row = dernierCoupAdversaire.charAt(1);
+    int rowIdx = this.ajusterIndexAGrilleJeu( Character.getNumericValue(row) % 3 );
+
+    System.out.println("Notre prochain coup doit être dans le cadre suivant: ");
+    System.out.println(" - colonne: "+ colIdx);
+    System.out.println(" - rangee: "+ rowIdx);
     
     return new int[]{colIdx, rowIdx};
+  }
+
+  /**
+   * Ajuste l'index d'une rangee ou d'une colonne
+   * a la taille de la grille de jeu. La taille d'une
+   * grille est determinee par le nombre de cadre de tic-tac-toe
+   * qu'elle possede. Ainsi, une grille ayant 9 cadres de jeu sera
+   * de taille 3x3
+   * @param index index d'une rangee ou d'une colonne (va presentement de 1 a 9)
+   * @return l'index du cadre
+   */
+  private int ajusterIndexAGrilleJeu(int index) {
+    int indexAjuste = index % 3;
+    return (indexAjuste == 0) ? 3 : indexAjuste;
   }
  
 
@@ -87,7 +126,7 @@ public class TicTacToeAI {
 
     for (int i = 3; 0 < i; i--) {
       
-      String lettre = Character.toString( CODE_COL[(colFin-(i))] );
+      String lettre = Character.toString( COLUMN_IDENTIFIERS.charAt(colFin-(i)) );
       String numero = Integer.toString(rowFin-(i-1));
       ourColumns.add(lettre);
       ourRows.add( numero );
@@ -110,6 +149,5 @@ public class TicTacToeAI {
   public HashMap getGrille(){
     return this._grilleJeu;
   }
-
 
 }

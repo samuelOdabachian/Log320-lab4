@@ -83,6 +83,11 @@ public class MinmaxTree {
     }
 
     //Envoie une liste de tous les combinaison du cadre approprié 
+    /**
+     * 
+     * @param cadre index du cadre. cadre[0] = rangee, cadre[1] = colonne
+     * @return
+     */
     private String[] processInterval(int[] cadre){
         
         if(cadre[1] == 1 ){//Si la ligne est la première

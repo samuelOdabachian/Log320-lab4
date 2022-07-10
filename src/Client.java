@@ -14,11 +14,11 @@ class Client {
     // int[][] board = new int[9][9];
     int[] testCase = {3,2};
     TicTacToeAI notreAI = new TicTacToeAI();
-    notreAI.jouer("F2");
+    notreAI.jouer(2, "F2");
 
-    MinmaxTree minmaxTree = new MinmaxTree();
+    // MinmaxTree minmaxTree = new MinmaxTree();
     //try to printout the tree during the creation instead of making a new methode.
-    minmaxTree.creatTree(testCase, notreAI.getGrille());
+    // minmaxTree.creatTree(testCase, notreAI.getGrille());
 
     
 
