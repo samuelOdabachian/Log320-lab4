@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
+import javax.rmi.CORBA.Util;
+
 /**
  * 0 -> case vide
  * 2 -> O
@@ -12,7 +14,9 @@ import java.util.Vector;
  */
 public class TicTacToeAI {
 
-  private String _dernierCoupAdversaire;
+  private String _dernierCoupAdversaire = new String();
+  private String _derniereTentativeJoueur = new String();
+  private int[] _prochainCadreValide = {-1, -1};
   private HashMap<String, Integer> _grilleJeu= new HashMap<String, Integer>();
   private static final String COLUMN_IDENTIFIERS = "ABCDEFGHI";
   private int _joueurId = -1; //can be 2 for O or 4 for X
@@ -35,47 +39,113 @@ public class TicTacToeAI {
     return listeCases;
   }
 
+  /**
+   * Code cmd == 4
+   * Rejouer sur une case differente apres
+   * qu'on ait tente un coup invalide.
+   * 
+   * TODO: Le programme loop quand on tente de jouer dans 
+   * un cadre non disponible
+   * 
+   * Prochaine etape: si bien fait, ne devrait qu'etre appele quand
+   * le joueur tente de jouer dans un cadre qui a deja ete gagne.
+   * Il faut alors enlever le cadre des prochaines possibilites
+   * @return
+   */
   public String rejouer() {
-    System.out.println("Notre AI va jouer encore. Le coup de l'adversaire était " + this._dernierCoupAdversaire);
-    int[] cadre = determinerProchainCadreValide(this._dernierCoupAdversaire);
+    System.out.println("["+Utils.obtenirSymboleJoueur(this._joueurId)+"] Notre AI va jouer encore. Le coup de l'adversaire était " + this._dernierCoupAdversaire);
     
-    MinmaxTree minmaxTree = new MinmaxTree(Utils.obtenirSymboleJoueur(this._joueurId));
-    minmaxTree.creatTree(cadre, this._grilleJeu);
-    String meilleureDecision = minmaxTree.genererMeilleurDecision(cadre);
+    String meilleureDecision = obtenirProchainCoupValide(this._prochainCadreValide);
+
     System.out.println("<- AI a decide de placer un coup a la case "+ meilleureDecision);
-    return meilleureDecision;
-  }
-  public String jouer(int joueurId) {
-    System.out.println("**Notre AI va jouer. On fait le premier coup");
     
-    int index = (int) (Math.random() * 100) % 81;
-    System.out.println("generated ran = "+index);
-    // System.out.println(this._grilleJeu.toString());
-    List<String> keys = new ArrayList<String>(this._grilleJeu.keySet());
-    String meilleureDecision = keys.get(index);
-    System.out.println("AI a decide de placer un coup a la case "+ meilleureDecision);
     return meilleureDecision;
   }
 
-  public String jouer(int joueurId, String dernierCoupAdversaire) {
+  /**
+   * Code cmd == 1
+   * Jouer premier coup de la partie.
+   * @param joueurId
+   * @return
+   */
+  public String jouer(int joueurId) {
+
+    System.out.println("["+Utils.obtenirSymboleJoueur(joueurId)+"] Notre AI va jouer. On fait le premier coup");
     
-    this._dernierCoupAdversaire = dernierCoupAdversaire;
+    String meilleureDecision = obtenirProchainCoupValide(this._prochainCadreValide);
+
+    System.out.println("AI a decide de placer un coup a la case "+ meilleureDecision);
+
+    return meilleureDecision;
+  }
+
+  /**
+   * Code cmd == 3
+   * Jouer un coup.
+   * @param joueurId
+   * @param dernierCoupAdversaire
+   * @return
+   */
+  public String jouer(int joueurId, String dernierCoupAdversaire) {
+
+    this._dernierCoupAdversaire = dernierCoupAdversaire.trim();
     this._joueurId = joueurId;
 
     int adversaireId = joueurId == 2 ? 4 : 2;
 
-    System.out.println("Notre AI va jouer.");
-    System.out.println(" - Nous somme: "+Utils.obtenirSymboleJoueur(joueurId));
+    System.out.println("["+Utils.obtenirSymboleJoueur(joueurId)+"] Notre AI va jouer.");
     System.out.println(" - Le coup de l'adversaire était " + this._dernierCoupAdversaire);
 
-    int[] cadre = determinerProchainCadreValide(dernierCoupAdversaire);
+    int[] cadre = determinerProchainCadreValide(this._dernierCoupAdversaire);
     
-    this._grilleJeu.replace(dernierCoupAdversaire, adversaireId);
-    MinmaxTree minmaxTree = new MinmaxTree(Utils.obtenirSymboleJoueur(joueurId));
-    minmaxTree.creatTree(cadre, this._grilleJeu);
-    String meilleureDecision = minmaxTree.genererMeilleurDecision(cadre);
+    // important de mettre a jour la position de l'adversaire
+    // avant de generer le prochain coup valide
+    System.out.println("mettre a jour adversaire: "+adversaireId);
+    mettreAJourGrille(this._dernierCoupAdversaire, adversaireId);
+    
+    String meilleureDecision = obtenirProchainCoupValide(cadre);
+    
+    this._prochainCadreValide = cadre;
+
     System.out.println("AI a decide de placer un coup a la case "+ meilleureDecision);
     
+    return meilleureDecision;
+  }
+
+  /**
+   * Mettre a jour la grille de jeu par
+   * rapport aux cases qui ont ete jouees
+   * @param coup
+   * @param symboleId
+   */
+  public void mettreAJourGrille(String coup, int symboleId) {
+    this._grilleJeu.replace(coup, symboleId);
+  }
+
+  /**
+   * Met a jour la derniere case que le joueur a joue
+   * @param symboleIdJoueur
+   */
+  public void mettreAJourGrilleJoueur(int symboleIdJoueur) {
+    System.out.println("le joueur a pu joué. "+ this._derniereTentativeJoueur + " vs "+this._dernierCoupAdversaire);
+    mettreAJourGrille(this._derniereTentativeJoueur, symboleIdJoueur);
+  }
+
+  /**
+   * obtenir valeur du prochain coup
+   * @param cadre
+   * @return
+   */
+  private String obtenirProchainCoupValide(int[] cadre) {
+
+    MinmaxTree minmaxTree = new MinmaxTree(Utils.obtenirSymboleJoueur(this._joueurId), this._grilleJeu);
+
+    minmaxTree.creatTree(cadre, this._grilleJeu);
+
+    String meilleureDecision = minmaxTree.genererMeilleurDecision(cadre);
+
+    this._derniereTentativeJoueur = meilleureDecision;
+
     return meilleureDecision;
   }
 
@@ -93,7 +163,7 @@ public class TicTacToeAI {
 
     char row = dernierCoupAdversaire.charAt(1);
     int rowIdx = this.ajusterIndexAGrilleJeu( Character.getNumericValue(row) % 3 );
-
+    
     System.out.println("Notre prochain coup doit être dans le cadre suivant: ");
     System.out.println(" - colonne: "+ colIdx);
     System.out.println(" - rangee: "+ rowIdx);
@@ -115,39 +185,6 @@ public class TicTacToeAI {
     return (indexAjuste == 0) ? 3 : indexAjuste;
   }
  
-
-  public String[][] determinerIntervalCaseAction(int[] caseAction) {
-
-    int colFin = caseAction[0]*3;
-    int rowFin = caseAction[1]*3;
-
-    ArrayList<String> validCases = new ArrayList<String>();
-
-    ArrayList<String> ourColumns = new ArrayList<String>();
-    ArrayList<String> ourRows = new ArrayList<String>();
-
-    for (int i = 3; 0 < i; i--) {
-      
-      String lettre = Character.toString( COLUMN_IDENTIFIERS.charAt(colFin-(i)) );
-      String numero = Integer.toString(rowFin-(i-1));
-      ourColumns.add(lettre);
-      ourRows.add( numero );
-      System.out.println("on est à "+(i)+" :: "+lettre+" :: "+numero);
-    }
-
-    for (int i = 0; i < ourColumns.size(); i++) {
-      for (int j = 0; j < ourRows.size(); j++) {
-        String caseCode = ourColumns.get(i) + ourRows.get(j);
-        validCases.add(caseCode );
-      }
-    }
-    System.out.println("Nos cases possibles:: "+validCases.toString());
-    String[] tabLettre = ourColumns.stream().toArray(String[]::new);
-    String[] tabNumero = ourRows.stream().toArray(String[]::new);
-    String[][] tabCodes = {tabLettre, tabNumero};
-    return tabCodes;
-  }
-
   public HashMap getGrille(){
     return this._grilleJeu;
   }

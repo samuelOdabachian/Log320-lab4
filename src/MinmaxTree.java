@@ -1,4 +1,3 @@
-import java.util.Arrays;
 import java.util.HashMap;
 
 //Tree a interoger pour savoir les pourcentages de ganger pour chaque coups possible. Il faut recréer le tree
@@ -7,7 +6,7 @@ import java.util.HashMap;
 //Le tree envoie le meilleur choix possible après des calcules internes.
 public class MinmaxTree {
 
-    private HashMap <String, Integer> _etatCases;
+    private HashMap <String, Integer> _etatCases = new HashMap<String, Integer>();
     int[] cadre;
     String _symboleDuJoeur;//X ou O.
     Node rootNode;
@@ -33,8 +32,9 @@ public class MinmaxTree {
         {cadreBasDroite, cadreDroite, cadreHautDroite} // colonne 3
     };
 
-    public MinmaxTree(String symboleDuJoueur) {
+    public MinmaxTree(String symboleDuJoueur, HashMap<String, Integer> etatGrilleJeu) {
         this._symboleDuJoeur = symboleDuJoueur;
+        this._etatCases.putAll(etatGrilleJeu);
     }
 
     //Créer le tree à partire de l'état du cadre courante. 
@@ -84,7 +84,6 @@ public class MinmaxTree {
         //Random number in the interval of the root node children arraylist.
         int rand = (int)(Math.random() * 10);
          int index = rand % rootNode.children.size(); // rand % 9
-         System.out.println("generated ran = "+index);
          return rootNode.children.get(index).desision;
     }
 
@@ -133,6 +132,11 @@ public class MinmaxTree {
     }
 
     private String[] obtenirListeCases(int[] cadre) {
+
+        if (cadre[0] == -1 && cadre[1] == -1) {
+           return this._etatCases.keySet().toArray( new String[this._etatCases.size()] );
+        }
+
         return CASES_GRILLE_JEU[cadre[0]-1][cadre[1]-1];
     }
 }
