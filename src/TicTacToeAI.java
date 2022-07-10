@@ -2,6 +2,7 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -34,9 +35,26 @@ public class TicTacToeAI {
     return listeCases;
   }
 
-  public String jouer() {
-    System.out.println("Notre AI a joué encore. Le coup de l'adversaire était " + this._dernierCoupAdversaire);
-    return "A2";
+  public String rejouer() {
+    System.out.println("Notre AI va jouer encore. Le coup de l'adversaire était " + this._dernierCoupAdversaire);
+    int[] cadre = determinerProchainCadreValide(this._dernierCoupAdversaire);
+    
+    MinmaxTree minmaxTree = new MinmaxTree(Utils.obtenirSymboleJoueur(this._joueurId));
+    minmaxTree.creatTree(cadre, this._grilleJeu);
+    String meilleureDecision = minmaxTree.genererMeilleurDecision(cadre);
+    System.out.println("<- AI a decide de placer un coup a la case "+ meilleureDecision);
+    return meilleureDecision;
+  }
+  public String jouer(int joueurId) {
+    System.out.println("**Notre AI va jouer. On fait le premier coup");
+    
+    int index = (int) (Math.random() * 100) % 81;
+    System.out.println("generated ran = "+index);
+    // System.out.println(this._grilleJeu.toString());
+    List<String> keys = new ArrayList<String>(this._grilleJeu.keySet());
+    String meilleureDecision = keys.get(index);
+    System.out.println("AI a decide de placer un coup a la case "+ meilleureDecision);
+    return meilleureDecision;
   }
 
   public String jouer(int joueurId, String dernierCoupAdversaire) {
@@ -47,34 +65,18 @@ public class TicTacToeAI {
     int adversaireId = joueurId == 2 ? 4 : 2;
 
     System.out.println("Notre AI va jouer.");
-    System.out.println(" - Nous somme: "+this.obtenirSigneJoueur(joueurId));
+    System.out.println(" - Nous somme: "+Utils.obtenirSymboleJoueur(joueurId));
     System.out.println(" - Le coup de l'adversaire était " + this._dernierCoupAdversaire);
 
-    int[] caseAction = determinerProchainCadreValide(dernierCoupAdversaire);
+    int[] cadre = determinerProchainCadreValide(dernierCoupAdversaire);
     
-    this._grilleJeu.put(dernierCoupAdversaire, adversaireId);
-
-    // MinmaxTree minmaxTree = new MinmaxTree();
-    // minmaxTree.creatTree(caseAction, this._grilleJeu);
-    return "A1";
-  }
-
-  private String obtenirSigneJoueur(int joueurId) {
-    String signe = "";
-
-    switch (joueurId) {
-      case 2:
-        signe = "O";
-        break;
-      case 4:
-        signe = "X";
-        break;
-      default:
-        signe = "ERREUR";
-        break;
-    }
-
-    return signe;
+    this._grilleJeu.replace(dernierCoupAdversaire, adversaireId);
+    MinmaxTree minmaxTree = new MinmaxTree(Utils.obtenirSymboleJoueur(joueurId));
+    minmaxTree.creatTree(cadre, this._grilleJeu);
+    String meilleureDecision = minmaxTree.genererMeilleurDecision(cadre);
+    System.out.println("AI a decide de placer un coup a la case "+ meilleureDecision);
+    
+    return meilleureDecision;
   }
 
   /**

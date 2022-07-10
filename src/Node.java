@@ -6,7 +6,7 @@ public class Node {
 
     //A faire le alpha et le beta.
     private HashMap <String, Integer> etatCadre;
-    ArrayList <Node> children;
+    ArrayList <Node> children = new ArrayList<Node>();
     private String symboleDuJoueurActuel; // X ou Y.
     //The decision of the current potential scenario;
     String desision;

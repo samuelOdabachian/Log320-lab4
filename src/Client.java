@@ -3,27 +3,46 @@ import java.net.*;
 
 class Client {
 
-  private static boolean IS_AI_ACTIVE = false;
+  private static boolean IS_AI_ACTIVE = true;
+  private static final boolean ACTIVATE_SERVER_MODE = false;
 
-  
+  private static final int SYMBOLE_O = 2;
+  private static final int SYMBOLE_X = 4;
+
+  private static int SYMBOLE_JOUEUR = -1;
+
   public static void main(String[] args) {
-
-    // Socket MyClient;
-    // BufferedInputStream input;
-    // BufferedOutputStream output;
-    // int[][] board = new int[9][9];
-    int[] testCase = {3,2};
-    TicTacToeAI notreAI = new TicTacToeAI();
-    notreAI.jouer(2, "F2");
-
-    // MinmaxTree minmaxTree = new MinmaxTree();
-    //try to printout the tree during the creation instead of making a new methode.
-    // minmaxTree.creatTree(testCase, notreAI.getGrille());
-
     
+    if (ACTIVATE_SERVER_MODE) {
+      startGameOnServer(args);
+    }
+    else {
+      System.out.println("TEST MODE");
+      TicTacToeAI notreAI = new TicTacToeAI();
+      SYMBOLE_JOUEUR = SYMBOLE_X;
+      String coupJoue = notreAI.jouer(SYMBOLE_JOUEUR);
+       coupJoue = notreAI.jouer(SYMBOLE_JOUEUR, "B2");
+       coupJoue = notreAI.jouer(SYMBOLE_JOUEUR, "D4");
+       System.out.println("\n");
+       for (int i = 0; i < 5; i++) {
+        coupJoue = notreAI.rejouer();
+      } 
+      // MinmaxTree minmaxTree = new MinmaxTree();
+      //try to printout the tree during the creation instead of making a new methode.
+      // minmaxTree.creatTree(testCase, notreAI.getGrille());
+    }
+  }
 
+  public static void startGameOnServer(String[] args) {
+    System.out.println("SERVER MODE");
+    TicTacToeAI notreAI = new TicTacToeAI();
+    
+    Socket MyClient;
+    BufferedInputStream input;
+    BufferedOutputStream output;
+    int[][] board = new int[9][9];
 
-    /*try {
+    try {
       MyClient = new Socket("localhost", 8888);
       input = new BufferedInputStream(MyClient.getInputStream());
       output = new BufferedOutputStream(MyClient.getOutputStream());
@@ -56,7 +75,10 @@ class Client {
 
           System.out.println("Nouvelle partie! Vous jouer blanc, entrez votre premier coup : ");
           String move = null;
-          move = "A1"; // AJOUT
+          // On assigne un symbole au joueur
+          SYMBOLE_JOUEUR = SYMBOLE_O; // TODO: Revoir methode d'assigner symbole
+          System.out.println("START HERE");
+          move = (IS_AI_ACTIVE) ? notreAI.jouer(SYMBOLE_JOUEUR) : console.readLine(); // TODO: Revoir
           output.write(move.getBytes(), 0, move.length());
           output.flush();
         }
@@ -67,6 +89,8 @@ class Client {
 
           int size = input.available();
           // System.out.println("size " + size);
+          // On assigne un symbole au joueur
+          SYMBOLE_JOUEUR = SYMBOLE_X; // TODO: Revoir methode d'assigner symbole
           input.read(aBuffer, 0, size);
           String s = new String(aBuffer).trim();
           System.out.println(s);
@@ -97,7 +121,7 @@ class Client {
           System.out.println("Entrez votre coup : ");
           String move = null;
           // move = console.readLine();
-          move = (IS_AI_ACTIVE) ? notreAI.jouer(s) : console.readLine();
+          move = (IS_AI_ACTIVE) ? notreAI.jouer(SYMBOLE_JOUEUR, s) : console.readLine();
           output.write(move.getBytes(), 0, move.length());
           output.flush();
 
@@ -106,7 +130,7 @@ class Client {
         if (cmd == '4') {
           System.out.println("Coup invalide, entrez un nouveau coup : ");
           String move = null;
-          move = (IS_AI_ACTIVE) ? notreAI.jouer() : console.readLine(); //AJOUT
+          move = (IS_AI_ACTIVE) ? notreAI.rejouer() : console.readLine(); //AJOUT
           output.write(move.getBytes(), 0, move.length());
           output.flush();
 
@@ -127,7 +151,7 @@ class Client {
       }
     } catch (IOException e) {
       System.out.println(e);
-    }*/
+    }
 
   }
 }
