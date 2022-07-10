@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.HashMap;
 
 //Tree a interoger pour savoir les pourcentages de ganger pour chaque coups possible. Il faut recréer le tree
@@ -42,14 +43,14 @@ public class MinmaxTree {
     //savoir l'état et construire l'arbre.
     //Il va construir l'état actuel avec des enfant designants les états future dependant des choix fait.
     //Il doit être capable de générer les hashmaps à partie des hashmaps. 
-    public void creatTree(int[] interval, HashMap <String, Integer> etatCases){
+    public void creatTree(int[] interval){
         String positions[] = obtenirListeCases(interval);
-        this._etatCases = etatCases;  
+        System.out.println("Positions possibles: "+Arrays.toString(positions));
         rootNode = new Node();
         Integer value;
         //for loop pour interoger le hashmap pour avoir info sur le cadre en question.
         for(int i = 0; i < positions.length; i++ ){
-            value = etatCases.get(positions[i]);
+            value = this._etatCases.get(positions[i]);
             rootNode.put(positions[i],value);
         }
         creatChildren(rootNode);
@@ -87,9 +88,9 @@ public class MinmaxTree {
          return rootNode.children.get(index).desision;
     }
 
-    public void setEtatCases(HashMap <String, Integer> etatCases){
-        this._etatCases = etatCases;
-    }
+    // public void setEtatCases(HashMap <String, Integer> etatCases){
+    //     this._etatCases = etatCases;
+    // }
 
     //Envoie une liste de tous les combinaison du cadre approprié 
     /**
@@ -131,12 +132,18 @@ public class MinmaxTree {
         return null;
     }
 
-    private String[] obtenirListeCases(int[] cadre) {
+    public void retirerCadre(int[] cadre) {
+        String[] casesCadre = CASES_GRILLE_JEU[cadre[0]-1][cadre[1]-1];
+        for (String uneCase : casesCadre) {
+            this._etatCases.remove(uneCase);
+        }
+    }
+
+    public String[] obtenirListeCases(int[] cadre) {
 
         if (cadre[0] == -1 && cadre[1] == -1) {
            return this._etatCases.keySet().toArray( new String[this._etatCases.size()] );
         }
-
         return CASES_GRILLE_JEU[cadre[0]-1][cadre[1]-1];
     }
 }

@@ -23,6 +23,7 @@ class Client {
       notreAI.jouer(SYMBOLE_JOUEUR);
       notreAI.jouer(SYMBOLE_JOUEUR, "C4");
       notreAI.rejouer();
+      notreAI.rejouer();
        System.out.println("\n");
 
       // MinmaxTree minmaxTree = new MinmaxTree();

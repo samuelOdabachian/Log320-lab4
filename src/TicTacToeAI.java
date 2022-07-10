@@ -20,6 +20,7 @@ public class TicTacToeAI {
   private HashMap<String, Integer> _grilleJeu= new HashMap<String, Integer>();
   private static final String COLUMN_IDENTIFIERS = "ABCDEFGHI";
   private int _joueurId = -1; //can be 2 for O or 4 for X
+  private List<int[]> _listeCadresNonDisponible = new ArrayList<int[]>();
 
   public TicTacToeAI() {
     this._grilleJeu = this.initTab();
@@ -44,21 +45,27 @@ public class TicTacToeAI {
    * Rejouer sur une case differente apres
    * qu'on ait tente un coup invalide.
    * 
-   * TODO: Le programme loop quand on tente de jouer dans 
-   * un cadre non disponible
+   * Si un coup joue est invalide, c'est que
+   * le cadre n'est plus disponible. Alors ce cadre est enleve des
+   * prochaine possibilites
    * 
-   * Prochaine etape: si bien fait, ne devrait qu'etre appele quand
-   * le joueur tente de jouer dans un cadre qui a deja ete gagne.
-   * Il faut alors enlever le cadre des prochaines possibilites
    * @return
    */
   public String rejouer() {
+
     System.out.println("["+Utils.obtenirSymboleJoueur(this._joueurId)+"] Notre AI va jouer encore. Le coup de l'adversaire était " + this._dernierCoupAdversaire);
     
-    String meilleureDecision = obtenirProchainCoupValide(this._prochainCadreValide);
+    int[] cadreNonDispo = this.determinerCadreCoupDonne(this._derniereTentativeJoueur);
+    System.out.println("Cadre precedent (à enlever des places possibles dans minmaxtree)"+ Arrays.toString(cadreNonDispo));
+    
+    this._listeCadresNonDisponible.add( cadreNonDispo );
+    
+    int[] tousCadres = {-1, -1};
+    String meilleureDecision = obtenirProchainCoupValide(tousCadres);
 
     System.out.println("<- AI a decide de placer un coup a la case "+ meilleureDecision);
-    
+    System.out.println("\n");
+
     return meilleureDecision;
   }
 
@@ -75,7 +82,7 @@ public class TicTacToeAI {
     String meilleureDecision = obtenirProchainCoupValide(this._prochainCadreValide);
 
     System.out.println("AI a decide de placer un coup a la case "+ meilleureDecision);
-
+    System.out.println("\n");
     return meilleureDecision;
   }
 
@@ -100,7 +107,7 @@ public class TicTacToeAI {
     
     // important de mettre a jour la position de l'adversaire
     // avant de generer le prochain coup valide
-    System.out.println("mettre a jour adversaire: "+adversaireId);
+    System.out.println("mettre a jour adversaire: ["+Utils.obtenirSymboleJoueur(adversaireId) + "] = "+this._dernierCoupAdversaire );
     mettreAJourGrille(this._dernierCoupAdversaire, adversaireId);
     
     String meilleureDecision = obtenirProchainCoupValide(cadre);
@@ -108,7 +115,7 @@ public class TicTacToeAI {
     this._prochainCadreValide = cadre;
 
     System.out.println("AI a decide de placer un coup a la case "+ meilleureDecision);
-    
+    System.out.println("\n");
     return meilleureDecision;
   }
 
@@ -127,7 +134,7 @@ public class TicTacToeAI {
    * @param symboleIdJoueur
    */
   public void mettreAJourGrilleJoueur(int symboleIdJoueur) {
-    System.out.println("le joueur a pu joué. "+ this._derniereTentativeJoueur + " vs "+this._dernierCoupAdversaire);
+    // System.out.println("le joueur a pu joué. "+ this._derniereTentativeJoueur + " vs "+this._dernierCoupAdversaire);
     mettreAJourGrille(this._derniereTentativeJoueur, symboleIdJoueur);
   }
 
@@ -139,14 +146,25 @@ public class TicTacToeAI {
   private String obtenirProchainCoupValide(int[] cadre) {
 
     MinmaxTree minmaxTree = new MinmaxTree(Utils.obtenirSymboleJoueur(this._joueurId), this._grilleJeu);
-
-    minmaxTree.creatTree(cadre, this._grilleJeu);
+    retirerTousCadresNonDispo(minmaxTree); // on enleve tous les cadres qui ne sont plus dispo
+    minmaxTree.creatTree(cadre);
 
     String meilleureDecision = minmaxTree.genererMeilleurDecision(cadre);
 
     this._derniereTentativeJoueur = meilleureDecision;
 
     return meilleureDecision;
+  }
+
+  /**
+   * Supprime tous les cadres qui ne sont plus disponible
+   * du nouvel arbre minmax
+   * @param tree un arbre minmax
+   */
+  private void retirerTousCadresNonDispo(MinmaxTree tree) {
+    for (int[] cadre : this._listeCadresNonDisponible) {
+      tree.retirerCadre(cadre);
+    }
   }
 
   /**
@@ -168,6 +186,22 @@ public class TicTacToeAI {
     System.out.println(" - colonne: "+ colIdx);
     System.out.println(" - rangee: "+ rowIdx);
     
+    return new int[]{colIdx, rowIdx};
+  }
+
+  /**
+   * Determine le cadre dans lequel se trouve un coup
+   * @param coup un coup
+   * @return cadre
+   */
+  public int[] determinerCadreCoupDonne(String coup) {
+
+    char col = coup.charAt(0);
+    int colIdx = (int) Math.ceil( (COLUMN_IDENTIFIERS.indexOf(col)+1)/3.0d );
+
+    char row = coup.charAt(1);
+    int rowIdx = (int)Math.ceil( Character.getNumericValue(row)/3.0d );
+
     return new int[]{colIdx, rowIdx};
   }
 
