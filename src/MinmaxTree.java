@@ -9,7 +9,7 @@ public class MinmaxTree {
 
     private HashMap <String, Integer> _etatCases = new HashMap<String, Integer>();
     int[] cadre;
-    String _symboleDuJoeur;//X ou O.
+    int symboleDuJoeur;//X ou O.
     Node rootNode;
 
     //Les 3 cadres de bas sur le plateau de jeu
@@ -33,8 +33,8 @@ public class MinmaxTree {
         {cadreBasDroite, cadreDroite, cadreHautDroite} // colonne 3
     };
 
-    public MinmaxTree(String symboleDuJoueur, HashMap<String, Integer> etatGrilleJeu) {
-        this._symboleDuJoeur = symboleDuJoueur;
+    public MinmaxTree(int symboleDuJoueur, HashMap<String, Integer> etatGrilleJeu) {
+        this.symboleDuJoeur = symboleDuJoueur;
         this._etatCases.putAll(etatGrilleJeu);
     }
 
@@ -43,10 +43,13 @@ public class MinmaxTree {
     //savoir l'état et construire l'arbre.
     //Il va construir l'état actuel avec des enfant designants les états future dependant des choix fait.
     //Il doit être capable de générer les hashmaps à partie des hashmaps. 
-    public void creatTree(int[] interval){
+    public void creatTree(int[] interval, int symboleAdversaire){
         String positions[] = obtenirListeCases(interval);
-        System.out.println("Positions possibles: "+Arrays.toString(positions));
+        System.out.println("Positions possibles: " + Arrays.toString(positions));
         rootNode = new Node();
+        rootNode.setSymbole(symboleAdversaire);
+        rootNode.typeNode = "max";
+        
         Integer value;
         //for loop pour interoger le hashmap pour avoir info sur le cadre en question.
         for(int i = 0; i < positions.length; i++ ){
@@ -56,7 +59,7 @@ public class MinmaxTree {
         creatChildren(rootNode);
     }
 
-    //Pour chaque case vide, créer un scenario possible avec le choix fait.
+    //Pour chaque case vide, créer un scenario possible avec le choix fait. Configurer le alpha et beta aussi
     private void creatChildren(Node node) {
         //Le cadre actuel dans le noed est un Hashmap
         for (HashMap.Entry<String, Integer> entry : node.getMap().entrySet()) {
@@ -64,15 +67,21 @@ public class MinmaxTree {
             Integer value = entry.getValue();
             if(value == 0){
                 // value =  Integer.valueOf(_symboleDuJoeur); 
-                value = Utils.obtenirIdSymboleJoueur(this._symboleDuJoeur);
+                value = this.symboleDuJoeur;
                 node.creatAChild(key, value);
+            }
+            //Set le alpha et le beta en identifiant si c'est un noed max ou min.
+            if(node.typeNode.equals("max")){
+                node.alpha = trouverPointageMax(node);
+            }else if(node.typeNode.equals("min")){
+                node.beta = trouverPointageMin(node);
             }
         }
         //Pour chaque prediction de tour du joueur, changer le symmbole pour essayer de prédire l'action de l'adversaire.
-        if(_symboleDuJoeur.equals("X")){
-            _symboleDuJoeur = "O";
-        }else if(_symboleDuJoeur.equals("O")){
-            _symboleDuJoeur = "X";
+        if(symboleDuJoeur == 4){
+            symboleDuJoeur = 2;
+        }else if(symboleDuJoeur == 2){
+            symboleDuJoeur = 4;
         }
         //while this node has children, call this function recursivvely.
         for(int i = 0; i < node.children.size(); i++ ){
@@ -80,12 +89,35 @@ public class MinmaxTree {
         }
     }
 
+    //Trouve le pointage min des enfant d'un noed MIN  
+    public int trouverPointageMin(Node n){
+        int beta = Integer.MAX_VALUE;
+        for(int i = 0; i < n.children.size(); i++){
+            if(n.children.get(i).pointage <= beta){
+                beta = n.children.get(i).pointage;
+            }
+        }
+        return beta;
+    }
+
+    //Trouve le pointage max des enfants d'un noed MAX 
+    public int trouverPointageMax(Node n){
+        int alpha = Integer.MIN_VALUE;
+        for(int i = 0; i < n.children.size(); i++){
+            if(n.children.get(i).pointage >= alpha){
+                alpha = n.children.get(i).pointage;
+            }
+        }
+        return alpha;
+    }
+
     //recois la case et retourn l'identification de la position corespondant à la case.
+    //Generer la meilleur decision grace à l'alpha beta
     public String genererMeilleurDecision(int[] cadre){
         //Random number in the interval of the root node children arraylist.
         int rand = (int)(Math.random() * 10);
          int index = rand % rootNode.children.size(); // rand % 9
-         return rootNode.children.get(index).desision;
+         return rootNode.children.get(index).decision;
     }
 
     // public void setEtatCases(HashMap <String, Integer> etatCases){
@@ -154,7 +186,7 @@ public class MinmaxTree {
 /*
  * Memo:
  * 
- * Pour chaque enfant du Node, setter le nouveau symbole et creer des enfants pour chaque enfant des autre desision possible.
+ * Pour chaque enfant du Node, setter le nouveau symbole et creer des enfants pour chaque enfant des autre decision possible.
  * - Creat the new Node
  * - Set the symbole
  * - add node to the children list of parent

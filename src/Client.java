@@ -6,8 +6,10 @@ class Client {
   private static boolean IS_AI_ACTIVE = true;
   private static final boolean ACTIVATE_SERVER_MODE = true;
 
+  private static final int CASE_VIDE = 0;
   private static final int SYMBOLE_O = 2;
   private static final int SYMBOLE_X = 4;
+  
 
   private static int SYMBOLE_JOUEUR = -1;
 

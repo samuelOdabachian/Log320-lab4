@@ -7,9 +7,17 @@ public class Node {
     //A faire le alpha et le beta.
     private HashMap <String, Integer> etatCadre;
     ArrayList <Node> children = new ArrayList<Node>();
-    private String symboleDuJoueurActuel; // X ou Y.
-    //The decision of the current potential scenario;
-    String desision;
+    private int symboleDuJoueurActuel; // 4= X ou 2 = O.
+    //The players current decision where to place his symbole "Key".
+    String decision;
+    //The risk factor of the potential decision. 
+    int pointage;
+    //Le meilleur pointage du succeseur du noeud MAX (le noed pour lequel le tour a jouer et notre joueur) 
+    int alpha;
+    //Inverse pour le noed MIN.
+    int beta;
+    //Identify if it is a Max or Min node
+    String typeNode;
 
     public Node(){
         etatCadre = new HashMap<>();
@@ -17,17 +25,21 @@ public class Node {
 
     public Node(HashMap <String, Integer> etatCadre){
         this.etatCadre = etatCadre;
+        pointage = (int)(Math.random() * 100);
+    }
+    public Node(HashMap <String, Integer> etatCadre, int symboleDuJoueurActuel){
+        this.etatCadre = etatCadre;
+        pointage = (int)(Math.random() * 100);
+        this.symboleDuJoueurActuel = symboleDuJoueurActuel;
     }
 
-
     //Recopier le etat du cadre mais faire une seul changement dans d'une position pour dessiner un scenario potentiel. 
-    public void creatAChild(String key, Integer value){
-        Node n = new Node(etatCadre);
-        n.replace(key, value);
-        n.desision = key;
+    public void creatAChild(String key, Integer symboleDuJoueurActuel){
+        Node n = new Node(etatCadre,symboleDuJoueurActuel);
+        n.replace(key, symboleDuJoueurActuel);
+        n.decision = key;
         children.add(n);
-
-        
+   
     }
 
     public void put(String key, Integer value){
@@ -43,7 +55,7 @@ public class Node {
     }
 
     //A être setter a chaque fois qu'un nouveau niveau s'ajoute dans l'arbre.
-    public void setSymbole(String symboleDuJoueurActuel){
+    public void setSymbole(int symboleDuJoueurActuel){
         this.symboleDuJoueurActuel = symboleDuJoueurActuel;
     }
 
