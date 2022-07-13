@@ -1,4 +1,4 @@
-public class Utils {
+public class JeuUtils {
     public static int obtenirIdSymboleJoueur(String symboleJoueur) {
         int idSymbole = -1;
         switch (symboleJoueur) {

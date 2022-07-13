@@ -90,7 +90,7 @@ public class MinmaxTree {
         // }else if(symboleDuJoeur == 2){
         //     symboleDuJoeur = 4;
         // }
-        symboleDuJoeur = Utils.obtenirIdSymboleAdverse(symboleDuJoeur);
+        symboleDuJoeur = JeuUtils.obtenirIdSymboleAdverse(symboleDuJoeur);
 
         // //while this node has children, call this function recursivvely.
         for(int i = 0; i < node.children.size(); i++ ){
