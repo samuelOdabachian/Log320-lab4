@@ -36,6 +36,7 @@ public class MinmaxTree {
     public MinmaxTree(int symboleDuJoueur, HashMap<String, Integer> etatGrilleJeu) {
         this.symboleDuJoeur = symboleDuJoueur;
         this._etatCases.putAll(etatGrilleJeu);
+        // this._etatCases = etatGrilleJeu;
     }
 
     //Créer le tree à partire de l'état du cadre courante. 
@@ -44,12 +45,12 @@ public class MinmaxTree {
     //Il va construir l'état actuel avec des enfant designants les états future dependant des choix fait.
     //Il doit être capable de générer les hashmaps à partie des hashmaps. 
     public void creatTree(int[] interval, int symboleAdversaire){
-        String positions[] = obtenirListeCases(interval);
+        String[] positions = obtenirListeCases(interval);
         System.out.println("Positions possibles: " + Arrays.toString(positions));
         rootNode = new Node();
         rootNode.setSymbole(symboleAdversaire);
         rootNode.typeNode = "max";
-        
+       
         Integer value;
         //for loop pour interoger le hashmap pour avoir info sur le cadre en question.
         for(int i = 0; i < positions.length; i++ ){
@@ -65,25 +66,33 @@ public class MinmaxTree {
         for (HashMap.Entry<String, Integer> entry : node.getMap().entrySet()) {
             String key = entry.getKey();
             Integer value = entry.getValue();
+            
             if(value == 0){
                 // value =  Integer.valueOf(_symboleDuJoeur); 
                 value = this.symboleDuJoeur;
                 node.creatAChild(key, value);
             }
             //Set le alpha et le beta en identifiant si c'est un noed max ou min.
-            if(node.typeNode.equals("max")){
-                node.alpha = trouverPointageMax(node);
-            }else if(node.typeNode.equals("min")){
-                node.beta = trouverPointageMin(node);
+            
+            if (node.typeNode != null) {
+                if(node.typeNode.equals("max")){
+                    node.alpha = trouverPointageMax(node);
+                    // System.out.println("alpha: "+node.alpha);
+                }else if(node.typeNode.equals("min")){
+                    node.beta = trouverPointageMin(node);
+                    // System.out.println("beta: "+node.beta);
+                }
             }
         }
         //Pour chaque prediction de tour du joueur, changer le symmbole pour essayer de prédire l'action de l'adversaire.
-        if(symboleDuJoeur == 4){
-            symboleDuJoeur = 2;
-        }else if(symboleDuJoeur == 2){
-            symboleDuJoeur = 4;
-        }
-        //while this node has children, call this function recursivvely.
+        // if(symboleDuJoeur == 4){
+        //     symboleDuJoeur = 2;
+        // }else if(symboleDuJoeur == 2){
+        //     symboleDuJoeur = 4;
+        // }
+        symboleDuJoeur = Utils.obtenirIdSymboleAdverse(symboleDuJoeur);
+
+        // //while this node has children, call this function recursivvely.
         for(int i = 0; i < node.children.size(); i++ ){
             creatChildren(node.children.get(i));
         }

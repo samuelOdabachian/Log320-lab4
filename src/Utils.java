@@ -31,4 +31,8 @@ public class Utils {
 
         return signe;
     }
+
+    public static int obtenirIdSymboleAdverse(int joueurId) {
+        return (joueurId == 2) ? 4 : 2;
+    }
 }

@@ -145,9 +145,9 @@ public class TicTacToeAI {
    */
   private String obtenirProchainCoupValide(int[] cadre) {
 
-    MinmaxTree minmaxTree = new MinmaxTree(Utils.obtenirSymboleJoueur(this._joueurId), this._grilleJeu);
+    MinmaxTree minmaxTree = new MinmaxTree(this._joueurId, this._grilleJeu);
     retirerTousCadresNonDispo(minmaxTree); // on enleve tous les cadres qui ne sont plus dispo
-    minmaxTree.creatTree(cadre);
+    minmaxTree.creatTree(cadre, Utils.obtenirIdSymboleAdverse(this._joueurId));
 
     String meilleureDecision = minmaxTree.genererMeilleurDecision(cadre);
 
