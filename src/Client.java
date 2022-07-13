@@ -4,7 +4,7 @@ import java.net.*;
 class Client {
 
   private static boolean IS_AI_ACTIVE = true;
-  private static final boolean ACTIVATE_SERVER_MODE = true;
+  private static final boolean ACTIVATE_SERVER_MODE = false;
 
   private static final int SYMBOLE_O = 2;
   private static final int SYMBOLE_X = 4;
@@ -19,16 +19,17 @@ class Client {
     else {
       System.out.println("TEST MODE");
       TicTacToeAI notreAI = new TicTacToeAI();
-      SYMBOLE_JOUEUR = SYMBOLE_X;
-      notreAI.jouer(SYMBOLE_JOUEUR);
-      notreAI.jouer(SYMBOLE_JOUEUR, "C4");
-      notreAI.rejouer();
-      notreAI.rejouer();
+      // SYMBOLE_JOUEUR = SYMBOLE_X;
+      // notreAI.jouer(SYMBOLE_X);
+      // notreAI.jouer(SYMBOLE_X, "C4");
+      // notreAI.rejouer();
+      // notreAI.rejouer();
        System.out.println("\n");
-
-      // MinmaxTree minmaxTree = new MinmaxTree();
+      int[] testCase = {1,1};
+      // Utils.dessiner_grille_jeu(notreAI.getGrille());
+      MinmaxTree minmaxTree = new MinmaxTree(SYMBOLE_X, notreAI.getGrille());
       //try to printout the tree during the creation instead of making a new methode.
-      // minmaxTree.creatTree(testCase, notreAI.getGrille());
+      minmaxTree.creatTree(testCase);
     }
   }
 
@@ -119,8 +120,7 @@ class Client {
           System.out.println("Entrez votre coup : ");
           String move = null;
           // move = console.readLine();
-          // Mettre a jouer dernier coup jouer par nous dans la grille
-          notreAI.mettreAJourGrilleJoueur(SYMBOLE_JOUEUR);
+
           move = (IS_AI_ACTIVE) ? notreAI.jouer(SYMBOLE_JOUEUR, s) : console.readLine();
           output.write(move.getBytes(), 0, move.length());
           output.flush();

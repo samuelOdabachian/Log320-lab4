@@ -9,33 +9,17 @@ public class MinmaxTree {
 
     private HashMap <String, Integer> _etatCases = new HashMap<String, Integer>();
     int[] cadre;
-    String _symboleDuJoeur;//X ou O.
+    int _idSymboleJoueur;
     Node rootNode;
 
-    //Les 3 cadres de bas sur le plateau de jeu
-    private static final String[] cadreBasGauche = {"A1","A2","A3","B1","B2","B3","C1","C2","C3"};
-    private static final String[] cadreBasMilieu = {"D1","D2","D3","E1","E2","E3","F1","F2","F3"};
-    private static final String[] cadreBasDroite = {"G1","G2","G3","H1","H2","H3","I1","I2","I3"};
-        
-    //Les 3 cadres de centre sur le plateau de jeu
-    private static final String[] cadreGauche = {"A4","A5","A6","B4","B5","B6","C4","C5","C6"};
-    private static final String[] cadreMilieu = {"D4","D5","D6","E4","E5","E6","F4","F5","F6"};
-    private static final String[] cadreDroite = {"G4","G5","G6","H4","H5","H6","I4","I5","I6"};
+    // public MinmaxTree(String symboleDuJoueur, HashMap<String, Integer> etatGrilleJeu) {
+    //     this._symboleDuJoeur = symboleDuJoueur;
+    //     this._etatCases.putAll(etatGrilleJeu);
+    // }
 
-    //Les 3 cadres de haut sur le plateau de jeu
-    private static final String[] cadreHautGauche = {"A7","A8","A9","B7","B8","B9","C7","C8","C9"};
-    private static final String[] cadreHautMilieu = {"D7","D8","D9","E7","E8","E9","F7","F8","F9"};
-    private static final String[] cadreHautDroite = {"G7","G8","G9","H7","H8","H9","I7","I8","I9"};
-    
-    private static final String[][][] CASES_GRILLE_JEU = {
-        {cadreBasGauche, cadreGauche, cadreHautGauche}, //colonne 1
-        {cadreBasMilieu, cadreMilieu, cadreHautMilieu}, // colonne 2
-        {cadreBasDroite, cadreDroite, cadreHautDroite} // colonne 3
-    };
-
-    public MinmaxTree(String symboleDuJoueur, HashMap<String, Integer> etatGrilleJeu) {
-        this._symboleDuJoeur = symboleDuJoueur;
-        this._etatCases.putAll(etatGrilleJeu);
+    public MinmaxTree(int idSymboleDuJoueur, HashMap<String, Integer> etatGrilleJeu) {
+        this._idSymboleJoueur = idSymboleDuJoueur;
+        this._etatCases = etatGrilleJeu;
     }
 
     //Créer le tree à partire de l'état du cadre courante. 
@@ -45,15 +29,15 @@ public class MinmaxTree {
     //Il doit être capable de générer les hashmaps à partie des hashmaps. 
     public void creatTree(int[] interval){
         String positions[] = obtenirListeCases(interval);
-        System.out.println("Positions possibles: "+Arrays.toString(positions));
+        System.out.println("Positions/Cases possibles: "+Arrays.toString(positions));
         rootNode = new Node();
-        Integer value;
         //for loop pour interoger le hashmap pour avoir info sur le cadre en question.
         for(int i = 0; i < positions.length; i++ ){
-            value = this._etatCases.get(positions[i]);
-            rootNode.put(positions[i],value);
+            int etatCase = this._etatCases.get(positions[i]); // etatCase = 2, 4 ou 0
+            rootNode.put(positions[i], etatCase);
         }
         creatChildren(rootNode);
+        System.out.println(rootNode.getMap().toString());
     }
 
     //Pour chaque case vide, créer un scenario possible avec le choix fait.
@@ -64,16 +48,13 @@ public class MinmaxTree {
             Integer value = entry.getValue();
             if(value == 0){
                 // value =  Integer.valueOf(_symboleDuJoeur); 
-                value = Utils.obtenirIdSymboleJoueur(this._symboleDuJoeur);
+                // value = Utils.obtenirIdSymboleJoueur(this._symboleDuJoeur);
+                value = this._idSymboleJoueur;
                 node.creatAChild(key, value);
             }
         }
         //Pour chaque prediction de tour du joueur, changer le symmbole pour essayer de prédire l'action de l'adversaire.
-        if(_symboleDuJoeur.equals("X")){
-            _symboleDuJoeur = "O";
-        }else if(_symboleDuJoeur.equals("O")){
-            _symboleDuJoeur = "X";
-        }
+        this._idSymboleJoueur = Utils.obtenirIdAdversaire(this._idSymboleJoueur);
         //while this node has children, call this function recursivvely.
         for(int i = 0; i < node.children.size(); i++ ){
             creatChildren(node.children.get(i));
@@ -102,28 +83,28 @@ public class MinmaxTree {
         
         if(cadre[1] == 1 ){//Si la ligne est la première
             if(cadre[0] == 1){//Si la colone est la première (celui du plus bas)
-                return cadreBasGauche;
+                return Utils.cadreBasGauche;
             }else if(cadre[0] == 2){
-                return cadreBasMilieu;
+                return Utils.cadreBasMilieu;
             }else if(cadre[0] == 3){
-                return cadreBasDroite;
+                return Utils.cadreBasDroite;
             }
             
         }else if(cadre[1] == 2){
             if(cadre[0] == 1){//Si la colone est la deuxième (celui du plus bas)
-                return cadreGauche;
+                return Utils.cadreGauche;
             }else if(cadre[0] == 2){
-                return cadreMilieu;
+                return Utils.cadreMilieu;
             }else if(cadre[0] == 3){
-                return cadreDroite;
+                return Utils.cadreDroite;
             }
         }else if(cadre[1] == 3){
             if(cadre[0] == 1){//Si la colone est la deuxième (celui du plus bas)
-                return cadreHautGauche;
+                return Utils.cadreHautGauche;
             }else if(cadre[0] == 2){
-                return cadreHautMilieu;
+                return Utils.cadreHautMilieu;
             }else if(cadre[0] == 3){
-                return cadreHautDroite;
+                return Utils.cadreHautDroite;
             }
         }
 
@@ -133,7 +114,7 @@ public class MinmaxTree {
     }
 
     public void retirerCadre(int[] cadre) {
-        String[] casesCadre = CASES_GRILLE_JEU[cadre[0]-1][cadre[1]-1];
+        String[] casesCadre = Utils.CASES_GRILLE_JEU[cadre[0]-1][cadre[1]-1];
         for (String uneCase : casesCadre) {
             this._etatCases.remove(uneCase);
         }
@@ -144,7 +125,7 @@ public class MinmaxTree {
         if (cadre[0] == -1 && cadre[1] == -1) {
            return this._etatCases.keySet().toArray( new String[this._etatCases.size()] );
         }
-        return CASES_GRILLE_JEU[cadre[0]-1][cadre[1]-1];
+        return Utils.CASES_GRILLE_JEU[cadre[0]-1][cadre[1]-1];
     }
 }
 

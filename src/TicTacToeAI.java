@@ -18,26 +18,12 @@ public class TicTacToeAI {
   private String _derniereTentativeJoueur = new String();
   private int[] _prochainCadreValide = {-1, -1};
   private HashMap<String, Integer> _grilleJeu= new HashMap<String, Integer>();
-  private static final String COLUMN_IDENTIFIERS = "ABCDEFGHI";
+  
   private int _joueurId = -1; //can be 2 for O or 4 for X
   private List<int[]> _listeCadresNonDisponible = new ArrayList<int[]>();
 
   public TicTacToeAI() {
-    this._grilleJeu = this.initTab();
-  }
-
-  public HashMap<String, Integer> initTab() {
-
-    HashMap<String, Integer> listeCases = new HashMap<String, Integer>();
-
-    for (int i = 1; i <= 9; i++) {
-      String codeCase = Character.toString( COLUMN_IDENTIFIERS.charAt(i-1) );
-      for (int j = 1; j <= 9; j++) {
-        listeCases.put(codeCase + j, 0);
-      }
-    }
-  
-    return listeCases;
+    this._grilleJeu = Utils.generer_grille_jeu();
   }
 
   /**
@@ -54,7 +40,7 @@ public class TicTacToeAI {
   public String rejouer() {
 
     System.out.println("["+Utils.obtenirSymboleJoueur(this._joueurId)+"] Notre AI va jouer encore. Le coup de l'adversaire était " + this._dernierCoupAdversaire);
-    
+    mettreAJourGrilleJoueur(this._joueurId, false);
     int[] cadreNonDispo = this.determinerCadreCoupDonne(this._derniereTentativeJoueur);
     System.out.println("Cadre precedent (à enlever des places possibles dans minmaxtree)"+ Arrays.toString(cadreNonDispo));
     
@@ -78,7 +64,7 @@ public class TicTacToeAI {
   public String jouer(int joueurId) {
 
     System.out.println("["+Utils.obtenirSymboleJoueur(joueurId)+"] Notre AI va jouer. On fait le premier coup");
-    
+    this._joueurId = joueurId;
     String meilleureDecision = obtenirProchainCoupValide(this._prochainCadreValide);
 
     System.out.println("AI a decide de placer un coup a la case "+ meilleureDecision);
@@ -133,9 +119,12 @@ public class TicTacToeAI {
    * Met a jour la derniere case que le joueur a joue
    * @param symboleIdJoueur
    */
-  public void mettreAJourGrilleJoueur(int symboleIdJoueur) {
+  public void mettreAJourGrilleJoueur(int symboleIdJoueur, boolean isAccepte) {
     // System.out.println("le joueur a pu joué. "+ this._derniereTentativeJoueur + " vs "+this._dernierCoupAdversaire);
-    mettreAJourGrille(this._derniereTentativeJoueur, symboleIdJoueur);
+    int etatCase = (isAccepte == true) ? symboleIdJoueur : 0;
+    
+    System.out.println("MAJ: "+etatCase+" case a ete accepté: "+isAccepte);
+    mettreAJourGrille(this._derniereTentativeJoueur, etatCase);
   }
 
   /**
@@ -145,14 +134,16 @@ public class TicTacToeAI {
    */
   private String obtenirProchainCoupValide(int[] cadre) {
 
-    MinmaxTree minmaxTree = new MinmaxTree(Utils.obtenirSymboleJoueur(this._joueurId), this._grilleJeu);
+    MinmaxTree minmaxTree = new MinmaxTree(this._joueurId, this._grilleJeu);
     retirerTousCadresNonDispo(minmaxTree); // on enleve tous les cadres qui ne sont plus dispo
     minmaxTree.creatTree(cadre);
-
+   
     String meilleureDecision = minmaxTree.genererMeilleurDecision(cadre);
 
     this._derniereTentativeJoueur = meilleureDecision;
 
+     // Mettre a jouer dernier coup jouer par nous dans la grille
+    mettreAJourGrilleJoueur(this._joueurId, true);
     return meilleureDecision;
   }
 
@@ -177,7 +168,7 @@ public class TicTacToeAI {
   public int[] determinerProchainCadreValide( String dernierCoupAdversaire) {
 
     char col = dernierCoupAdversaire.charAt(0);
-    int  colIdx = this.ajusterIndexAGrilleJeu( COLUMN_IDENTIFIERS.indexOf(col)+1 ); 
+    int  colIdx = this.ajusterIndexAGrilleJeu( Utils.COLUMN_IDENTIFIERS.indexOf(col)+1 ); 
 
     char row = dernierCoupAdversaire.charAt(1);
     int rowIdx = this.ajusterIndexAGrilleJeu( Character.getNumericValue(row) % 3 );
@@ -197,7 +188,7 @@ public class TicTacToeAI {
   public int[] determinerCadreCoupDonne(String coup) {
 
     char col = coup.charAt(0);
-    int colIdx = (int) Math.ceil( (COLUMN_IDENTIFIERS.indexOf(col)+1)/3.0d );
+    int colIdx = (int) Math.ceil( (Utils.COLUMN_IDENTIFIERS.indexOf(col)+1)/3.0d );
 
     char row = coup.charAt(1);
     int rowIdx = (int)Math.ceil( Character.getNumericValue(row)/3.0d );
