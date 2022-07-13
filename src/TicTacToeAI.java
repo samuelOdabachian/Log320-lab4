@@ -18,7 +18,6 @@ public class TicTacToeAI {
   private String _derniereTentativeJoueur = new String();
   private int[] _prochainCadreValide = {-1, -1};
   private HashMap<String, Integer> _grilleJeu= new HashMap<String, Integer>();
-  private static final String COLUMN_IDENTIFIERS = "ABCDEFGHI";
   private int _joueurId = -1; //can be 2 for O or 4 for X
   private List<int[]> _listeCadresNonDisponible = new ArrayList<int[]>();
 
@@ -31,7 +30,7 @@ public class TicTacToeAI {
     HashMap<String, Integer> listeCases = new HashMap<String, Integer>();
 
     for (int i = 1; i <= 9; i++) {
-      String codeCase = Character.toString( COLUMN_IDENTIFIERS.charAt(i-1) );
+      String codeCase = Character.toString( JeuUtils.COLUMN_IDENTIFIERS.charAt(i-1) );
       for (int j = 1; j <= 9; j++) {
         listeCases.put(codeCase + j, 0);
       }
@@ -177,7 +176,7 @@ public class TicTacToeAI {
   public int[] determinerProchainCadreValide( String dernierCoupAdversaire) {
 
     char col = dernierCoupAdversaire.charAt(0);
-    int  colIdx = this.ajusterIndexAGrilleJeu( COLUMN_IDENTIFIERS.indexOf(col)+1 ); 
+    int  colIdx = this.ajusterIndexAGrilleJeu( JeuUtils.COLUMN_IDENTIFIERS.indexOf(col)+1 ); 
 
     char row = dernierCoupAdversaire.charAt(1);
     int rowIdx = this.ajusterIndexAGrilleJeu( Character.getNumericValue(row) % 3 );
@@ -197,7 +196,7 @@ public class TicTacToeAI {
   public int[] determinerCadreCoupDonne(String coup) {
 
     char col = coup.charAt(0);
-    int colIdx = (int) Math.ceil( (COLUMN_IDENTIFIERS.indexOf(col)+1)/3.0d );
+    int colIdx = (int) Math.ceil( (JeuUtils.COLUMN_IDENTIFIERS.indexOf(col)+1)/3.0d );
 
     char row = coup.charAt(1);
     int rowIdx = (int)Math.ceil( Character.getNumericValue(row)/3.0d );
