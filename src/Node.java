@@ -7,7 +7,7 @@ public class Node {
     //A faire le alpha et le beta.
     private HashMap <String, Integer> etatCadre;
     ArrayList <Node> children = new ArrayList<Node>();
-    private int symboleDuJoueurActuel; // 4= X ou 2 = O.
+    int symboleDuJoueurActuel; // 4= X ou 2 = O.
     //The players current decision where to place his symbole "Key".
     String decision;
     //The risk factor of the potential decision. 
@@ -18,6 +18,8 @@ public class Node {
     int beta;
     //Identify if it is a Max or Min node
     String typeNode;
+    //Pour determiner quand arreter la creation de l'arbre.
+    int heuristiqueCounter;
 
     public Node(){
         etatCadre = new HashMap<>();
@@ -34,12 +36,19 @@ public class Node {
     }
 
     //Recopier le etat du cadre mais faire une seul changement dans d'une position pour dessiner un scenario potentiel. 
-    public void creatAChild(String key, Integer symboleDuJoueurActuel){
+    public Node creatAChild(String key, Integer symboleDuJoueurActuel, int heuristiqueCounter){
         Node n = new Node(etatCadre,symboleDuJoueurActuel);
         n.replace(key, symboleDuJoueurActuel);
         n.decision = key;
         children.add(n);
-   
+        
+        this.heuristiqueCounter = heuristiqueCounter;
+        if(this.typeNode.equals("Max")){
+            n.typeNode = "Min";
+        }else if(this.typeNode.equals("Min")){
+            n.typeNode = "Max";
+        }
+        return n;
     }
 
     public void put(String key, Integer value){
@@ -58,5 +67,4 @@ public class Node {
     public void setSymbole(int symboleDuJoueurActuel){
         this.symboleDuJoueurActuel = symboleDuJoueurActuel;
     }
-
 }

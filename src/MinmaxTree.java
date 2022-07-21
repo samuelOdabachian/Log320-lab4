@@ -29,6 +29,7 @@ public class MinmaxTree {
         rootNode = new Node();
         rootNode.setSymbole(symboleAdversaire);
         rootNode.typeNode = "max";
+        rootNode.heuristiqueCounter = 0;
        
         Integer value;
         //for loop pour interoger le hashmap pour avoir info sur le cadre en question.
@@ -46,10 +47,12 @@ public class MinmaxTree {
             String key = entry.getKey();
             Integer value = entry.getValue();
             
-            if(value == 0){
-                // value =  Integer.valueOf(_symboleDuJoeur); 
-                value = this.symboleDuJoeur;
-                node.creatAChild(key, value);
+            //Si heuristique est atteind, donc areter la creation de l'arbre.
+            if(value == 0 && node.heuristiqueCounter != 2){
+                value = JeuUtils.obtenirIdSymboleAdverse(node.symboleDuJoueurActuel);
+                Node n = node.creatAChild(key, value, node.heuristiqueCounter + 1);
+                //Recursively creat children as long as the heuristic permits.
+                creatChildren(n);
             }
             //Set le alpha et le beta en identifiant si c'est un noed max ou min.
             
@@ -63,18 +66,14 @@ public class MinmaxTree {
                 }
             }
         }
-        //Pour chaque prediction de tour du joueur, changer le symmbole pour essayer de prédire l'action de l'adversaire.
-        // if(symboleDuJoeur == 4){
-        //     symboleDuJoeur = 2;
-        // }else if(symboleDuJoeur == 2){
-        //     symboleDuJoeur = 4;
-        // }
-        symboleDuJoeur = JeuUtils.obtenirIdSymboleAdverse(symboleDuJoeur);
-
-        // //while this node has children, call this function recursivvely.
-        for(int i = 0; i < node.children.size(); i++ ){
-            creatChildren(node.children.get(i));
+    }
+    //Determine le score de chaque noed. 100, -100 ou 0;
+    //100 = Max a ganger,    -100 = Min a gagner    0 = egalité.
+    private void minimax(Node n){
+        if(n.isLeaf == true){
+            //return something.
         }
+        //call a score creator function that will examin the cadre and give it a score according to Max players symbole.
     }
 
     //Trouve le pointage min des enfant d'un noed MIN  

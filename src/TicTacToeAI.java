@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
-import javax.rmi.CORBA.Util;
 
 /**
  * 0 -> case vide
