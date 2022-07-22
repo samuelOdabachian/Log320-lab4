@@ -6,6 +6,7 @@ public class Node {
 
     //A faire le alpha et le beta.
     private HashMap <String, Integer> etatCadre;
+    private int[][] board;
     ArrayList <Node> children = new ArrayList<Node>();
     int symboleDuJoueurActuel; // 4= X ou 2 = O.
     //The players current decision where to place his symbole "Key".
@@ -20,6 +21,8 @@ public class Node {
     String typeNode;
     //Pour determiner quand arreter la creation de l'arbre.
     int heuristiqueCounter;
+
+    boolean isLeaf = true;
 
     public Node(){
         etatCadre = new HashMap<>();
@@ -43,12 +46,19 @@ public class Node {
         children.add(n);
         
         this.heuristiqueCounter = heuristiqueCounter;
+        this.isLeaf = false;
         if(this.typeNode.equals("Max")){
             n.typeNode = "Min";
         }else if(this.typeNode.equals("Min")){
             n.typeNode = "Max";
         }
         return n;
+    }
+    private void convertMapto2DArray(HashMap <String, Integer> etatCadre){
+        for (HashMap.Entry<String, Integer> entry : etatCadre.entrySet()) {
+            String key = entry.getKey();
+            Integer value = entry.getValue();
+        }
     }
 
     public void put(String key, Integer value){

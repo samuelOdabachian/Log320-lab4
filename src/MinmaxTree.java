@@ -69,9 +69,18 @@ public class MinmaxTree {
     }
     //Determine le score de chaque noed. 100, -100 ou 0;
     //100 = Max a ganger,    -100 = Min a gagner    0 = egalité.
-    private void minimax(Node n){
+    private void minimax(Node n, String joueur){
+        /* TO DO: For each children of parent node, recursive call until you find a leaf, give the leaf a score and return the score,
+         * For each child leaf a score is returned, depending if the parent is a Min or Max player keep the appropriate score fromm all their children...
+         */
+        
+        for(int i = 0; i < n.children.size(); i++){
+
+        }
+        
         if(n.isLeaf == true){
-            //return something.
+            //check the node`s board and wright in it a score and return the score
+            //return score;
         }
         //call a score creator function that will examin the cadre and give it a score according to Max players symbole. Make the score follow up the tree
     }
@@ -79,81 +88,110 @@ public class MinmaxTree {
     /*
      * Big function to detrmine what score to give the leaf cadre scenario
      */
-    private int scoreCalculator(int[][] board){
-        int joueurAdverse = JeuUtils.obtenirIdSymboleAdverse(symboleDuJoeur);
+    private int scoreCalculator(int[][] board, int joueurActuel){
+        int joueurAdverse = JeuUtils.obtenirIdSymboleAdverse(joueurActuel);
+        int score =0;
         if(board[0][0] != joueurAdverse){
             //if isTripplet or twin(twin has to check if third case is empty), for all directions from starting point then score is added
-            if(board[0][0] == symboleDuJoeur){
-                if(board[0][1] == symboleDuJoeur && board[0][2] == symboleDuJoeur){//TictacToe first ligne.
+            if(board[0][0] == joueurActuel){
+                if(board[0][1] == joueurActuel && board[0][2] == joueurActuel){//TictacToe first ligne.
 
-                }else if(board[0][1] == symboleDuJoeur && board[0][2] == 0 ){ //first ligne XX_
+                }else if(board[0][1] == joueurActuel && board[0][2] == 0 ){ //first ligne XX_
                 //give a score for a twin
-                }else if(board[0][1] == 0 && board[0][2] == symboleDuJoeur){ //First ligne variant X_X
+                }else if(board[0][1] == 0 && board[0][2] == joueurActuel){ //First ligne variant X_X
 
-                }else if(board[1][1] == symboleDuJoeur && board[2][2] == symboleDuJoeur){//Tictactoe Diagonal from top left corner
+                }else if(board[1][1] == joueurActuel && board[2][2] == joueurActuel){//Tictactoe Diagonal from top left corner
 
-                }else if(board[1][1] == 0 && board[2][2] == symboleDuJoeur){//Diagonal from top left corner. 
+                }else if(board[1][1] == 0 && board[2][2] == joueurActuel){//Diagonal from top left corner. 
 
-                }else if(board[1][1] == symboleDuJoeur && board[2][2] == 0){//Diagonal from top left corner variant. 
+                }else if(board[1][1] == joueurActuel && board[2][2] == 0){//Diagonal from top left corner variant. 
 
-                }else if(board[1][0] == symboleDuJoeur && board[2][0] == symboleDuJoeur){//Tictacttoe first colomn
+                }else if(board[1][0] == joueurActuel && board[2][0] == joueurActuel){//Tictacttoe first colomn
 
-                }else if(board[1][0] == 0 && board[2][0] == symboleDuJoeur){//First colomn
+                }else if(board[1][0] == 0 && board[2][0] == joueurActuel){//First colomn
                     
-                }else if(board[1][0] == symboleDuJoeur && board[2][0] == 0){//First colomn variant
+                }else if(board[1][0] == joueurActuel && board[2][0] == 0){//First colomn variant
 
                 }
             }else if(board[0][0] == 0){
-                if(board[0][1] == symboleDuJoeur && board[0][2] == 0 ){ //first ligne XX_
+                if(board[0][1] == joueurActuel && board[0][2] == 0 ){ //first ligne XX_
                     //give a score for a twin
-                }else if(board[0][1] == symboleDuJoeur && board[0][2] == symboleDuJoeur){ //First ligne  _XX
+                }else if(board[0][1] == joueurActuel && board[0][2] == joueurActuel){ //First ligne  _XX
     
-                }else if(board[1][1] == symboleDuJoeur && board[2][2] == symboleDuJoeur){//Diagonal from top left corner . 
+                }else if(board[1][1] == joueurActuel && board[2][2] == joueurActuel){//Diagonal from top left corner . 
     
-                }else if(board[1][0] == symboleDuJoeur && board[2][0] == symboleDuJoeur){//First colomn
+                }else if(board[1][0] == joueurActuel && board[2][0] == joueurActuel){//First colomn
                         
                 }
          
             }
         }else if(board[1][0] != joueurAdverse){
-            if(board[1][0] == symboleDuJoeur){
+            if(board[1][0] == joueurActuel){
                 
-                if(board[1][1] == symboleDuJoeur && board[1][2] == symboleDuJoeur){// tictactoe seond ligne
+                if(board[1][1] == joueurActuel && board[1][2] == joueurActuel){// tictactoe seond ligne
 
-                }else if(board[1][1] == symboleDuJoeur && board[1][2] == 0){//Second ligne XX_
+                }else if(board[1][1] == joueurActuel && board[1][2] == 0){//Second ligne XX_
 
-                }else if(board[1][1] == 0 && board[1][2] == symboleDuJoeur){//Second ligne variant X_X
+                }else if(board[1][1] == 0 && board[1][2] == joueurActuel){//Second ligne variant X_X
 
                 }
-            }else if(board[1][0] == 0 && board[1][1] == symboleDuJoeur && board[1][2] == 0){//Second ligne _XX
+            }else if(board[1][0] == 0 && board[1][1] == joueurActuel && board[1][2] == 0){//Second ligne _XX
 
             }
 
         }else if(board[2][0] != joueurAdverse){
-            if(board[2][0] == symboleDuJoeur){
-                if(board[2][1] == symboleDuJoeur && board[2][2] == symboleDuJoeur){//Tictacttoe
+            if(board[2][0] == joueurActuel){
+                if(board[2][1] == joueurActuel && board[2][2] == joueurActuel){//Tictacttoe third ligne
 
-                }else if(board[2][1] == symboleDuJoeur && board[2][2] == 0){ //Third ligne XX_
+                }else if(board[2][1] == joueurActuel && board[2][2] == 0){ //Third ligne XX_
 
-                }else if(board[2][1] == 0 && board[2][2] == symboleDuJoeur){//Third ligne X_X
+                }else if(board[2][1] == 0 && board[2][2] == joueurActuel){//Third ligne X_X
 
                 }
             }else if(board[2][0] == 0){
                 
-                 if(board[2][1] == symboleDuJoeur && board[2][2] == symboleDuJoeur){//Third ligne _XX
+                 if(board[2][1] == joueurActuel && board[2][2] == joueurActuel){//Third ligne _XX
 
                 }
             }
+        }else if(board[0][1] != joueurAdverse){
+            if(board[0][1] == joueurActuel){
+                if(board[1][1] == joueurActuel && board[2][1] == joueurActuel){//Tictacttoe midlle colomn
+            
+                }else if(board[1][1] == joueurActuel && board[2][1] == 0){//Second Colomn XX_
+
+                }else if(board[1][1] == 0 && board[2][1] == joueurActuel){//Second colomn variant X_X
+
+                }
+            }else if(board[0][1] == 0){
+                if(board[1][1] == joueurActuel && board[2][1] == joueurActuel){//Second colomn variant _XX
+
+                }
+            }
+        }else if(board[0][2] != joueurAdverse){
+            if(board[0][2] == joueurActuel){
+                if(board[1][2] == joueurActuel && board[2][2] == joueurActuel){//Tictactoe third colomn
+
+                }else if(board[1][1] == joueurActuel && board[2][0] == joueurActuel){//Tictactoe Diagonal top right corner
+
+                }else if(board[1][2] == joueurActuel && board[2][2] == 0){//Third colomn XX_
+
+                }else if(board[1][2] == 0 && board[2][2] == joueurActuel){//Third Colomn variant X_X
+
+                }
+            }else if(board[0][2] == 0){
+                if(board[1][2] == joueurActuel && board[2][2] == joueurActuel){//third colomn variant XX_
+                    
+                }
+            }
+        }else if (board[0][0] == joueurAdverse || board[1][0] == joueurAdverse || board[2][0] == joueurAdverse || board[0][1] == joueurAdverse || board[0][2] == joueurAdverse){
+            score = -1 * scoreCalculator(board,joueurAdverse);
+        }else{
+            score = 1;
         }
 
-        }
-          
-
-        //Give a small score for the singular cases
-    }else if(board[1][0] != 0 && board[1][1] != 0 && board[1][2] != 0){
-        //if a tripplet, 
-    }else if(board[2][0] != 0 && board[2][1] != 0 && board[2][2] != 0){
-
+    
+    return score;
     }
 
 
