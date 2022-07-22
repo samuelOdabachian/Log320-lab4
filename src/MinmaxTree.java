@@ -73,8 +73,89 @@ public class MinmaxTree {
         if(n.isLeaf == true){
             //return something.
         }
-        //call a score creator function that will examin the cadre and give it a score according to Max players symbole.
+        //call a score creator function that will examin the cadre and give it a score according to Max players symbole. Make the score follow up the tree
     }
+
+    /*
+     * Big function to detrmine what score to give the leaf cadre scenario
+     */
+    private int scoreCalculator(int[][] board){
+        int joueurAdverse = JeuUtils.obtenirIdSymboleAdverse(symboleDuJoeur);
+        if(board[0][0] != joueurAdverse){
+            //if isTripplet or twin(twin has to check if third case is empty), for all directions from starting point then score is added
+            if(board[0][0] == symboleDuJoeur){
+                if(board[0][1] == symboleDuJoeur && board[0][2] == symboleDuJoeur){//TictacToe first ligne.
+
+                }else if(board[0][1] == symboleDuJoeur && board[0][2] == 0 ){ //first ligne XX_
+                //give a score for a twin
+                }else if(board[0][1] == 0 && board[0][2] == symboleDuJoeur){ //First ligne variant X_X
+
+                }else if(board[1][1] == symboleDuJoeur && board[2][2] == symboleDuJoeur){//Tictactoe Diagonal from top left corner
+
+                }else if(board[1][1] == 0 && board[2][2] == symboleDuJoeur){//Diagonal from top left corner. 
+
+                }else if(board[1][1] == symboleDuJoeur && board[2][2] == 0){//Diagonal from top left corner variant. 
+
+                }else if(board[1][0] == symboleDuJoeur && board[2][0] == symboleDuJoeur){//Tictacttoe first colomn
+
+                }else if(board[1][0] == 0 && board[2][0] == symboleDuJoeur){//First colomn
+                    
+                }else if(board[1][0] == symboleDuJoeur && board[2][0] == 0){//First colomn variant
+
+                }
+            }else if(board[0][0] == 0){
+                if(board[0][1] == symboleDuJoeur && board[0][2] == 0 ){ //first ligne XX_
+                    //give a score for a twin
+                }else if(board[0][1] == symboleDuJoeur && board[0][2] == symboleDuJoeur){ //First ligne  _XX
+    
+                }else if(board[1][1] == symboleDuJoeur && board[2][2] == symboleDuJoeur){//Diagonal from top left corner . 
+    
+                }else if(board[1][0] == symboleDuJoeur && board[2][0] == symboleDuJoeur){//First colomn
+                        
+                }
+         
+            }
+        }else if(board[1][0] != joueurAdverse){
+            if(board[1][0] == symboleDuJoeur){
+                
+                if(board[1][1] == symboleDuJoeur && board[1][2] == symboleDuJoeur){// tictactoe seond ligne
+
+                }else if(board[1][1] == symboleDuJoeur && board[1][2] == 0){//Second ligne XX_
+
+                }else if(board[1][1] == 0 && board[1][2] == symboleDuJoeur){//Second ligne variant X_X
+
+                }
+            }else if(board[1][0] == 0 && board[1][1] == symboleDuJoeur && board[1][2] == 0){//Second ligne _XX
+
+            }
+
+        }else if(board[2][0] != joueurAdverse){
+            if(board[2][0] == symboleDuJoeur){
+                if(board[2][1] == symboleDuJoeur && board[2][2] == symboleDuJoeur){//Tictacttoe
+
+                }else if(board[2][1] == symboleDuJoeur && board[2][2] == 0){ //Third ligne XX_
+
+                }else if(board[2][1] == 0 && board[2][2] == symboleDuJoeur){//Third ligne X_X
+
+                }
+            }else if(board[2][0] == 0){
+                
+                 if(board[2][1] == symboleDuJoeur && board[2][2] == symboleDuJoeur){//Third ligne _XX
+
+                }
+            }
+        }
+
+        }
+          
+
+        //Give a small score for the singular cases
+    }else if(board[1][0] != 0 && board[1][1] != 0 && board[1][2] != 0){
+        //if a tripplet, 
+    }else if(board[2][0] != 0 && board[2][1] != 0 && board[2][2] != 0){
+
+    }
+
 
     //Trouve le pointage min des enfant d'un noed MIN  
     public int trouverPointageMin(Node n){
@@ -111,42 +192,6 @@ public class MinmaxTree {
     //     this._etatCases = etatCases;
     // }
 
-    //Envoie une liste de tous les combinaison du cadre approprié 
-    /**
-     * 
-     * @param cadre index du cadre. cadre[0] = rangee, cadre[1] = colonne
-     * @return
-     */
-    /*private String[] processInterval(int[] cadre){
-        
-        if(cadre[1] == 1 ){//Si la ligne est la première
-            if(cadre[0] == 1){//Si la colone est la première (celui du plus bas)
-                return JeuUtils.cadreBasGauche;
-            }else if(cadre[0] == 2){
-                return JeuUtils.cadreBasMilieu;
-            }else if(cadre[0] == 3){
-                return JeuUtils.cadreBasDroite;
-            }
-            
-        }else if(cadre[1] == 2){
-            if(cadre[0] == 1){//Si la colone est la deuxième (celui du plus bas)
-                return JeuUtils.cadreGauche;
-            }else if(cadre[0] == 2){
-                return JeuUtils.cadreMilieu;
-            }else if(cadre[0] == 3){
-                return JeuUtils.cadreDroite;
-            }
-        }else if(cadre[1] == 3){
-            if(cadre[0] == 1){//Si la colone est la deuxième (celui du plus bas)
-                return JeuUtils.cadreHautGauche;
-            }else if(cadre[0] == 2){
-                return JeuUtils.cadreHautMilieu;
-            }else if(cadre[0] == 3){
-                return JeuUtils.cadreHautDroite;
-            }
-        }
-        return null;
-    }*/
 
     public void retirerCadre(int[] cadre) {
         String[] casesCadre = JeuUtils.CASES_GRILLE_JEU[cadre[0]-1][cadre[1]-1];
@@ -162,17 +207,9 @@ public class MinmaxTree {
         }
         return JeuUtils.CASES_GRILLE_JEU[cadre[0]-1][cadre[1]-1];
     }
+
+
+    
 }
 
 
-/*
- * Memo:
- * 
- * Pour chaque enfant du Node, setter le nouveau symbole et creer des enfants pour chaque enfant des autre decision possible.
- * - Creat the new Node
- * - Set the symbole
- * - add node to the children list of parent
- * - 
- * - Create the scenario
- *  - Recursive call until no more "0" in the cadre.
- */
