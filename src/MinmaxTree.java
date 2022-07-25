@@ -23,19 +23,27 @@ public class MinmaxTree {
     //savoir l'état et construire l'arbre.
     //Il va construir l'état actuel avec des enfant designants les états future dependant des choix fait.
     //Il doit être capable de générer les hashmaps à partie des hashmaps. 
-    public void creatTree(int[] interval, int symboleAdversaire){
+    public void creatTree(int[] interval ){
         String[] positions = obtenirListeCases(interval);
+        int symboleAdversaire = JeuUtils.obtenirIdSymboleAdverse(symboleDuJoeur);
         System.out.println("Positions possibles: " + Arrays.toString(positions));
         rootNode = new Node();
         rootNode.setSymbole(symboleAdversaire);
-        rootNode.typeNode = "max";
+        rootNode.typeNode = "Max";
         rootNode.heuristiqueCounter = 0;
-       
+        
+
         Integer value;
         //for loop pour interoger le hashmap pour avoir info sur le cadre en question.
         for(int i = 0; i < positions.length; i++ ){
             value = this._etatCases.get(positions[i]);
             rootNode.put(positions[i],value);
+            // working System.out.println("Key:" + positions[i]);
+        }
+        for (HashMap.Entry<String, Integer> entry : rootNode.getMap().entrySet()) {
+            String key = entry.getKey();
+            Integer value2 = entry.getValue();
+          
         }
         creatChildren(rootNode);
     }
@@ -49,8 +57,9 @@ public class MinmaxTree {
             
             //Si heuristique est atteind, donc areter la creation de l'arbre.
             if(value == 0 && node.heuristiqueCounter != 2){
-                value = JeuUtils.obtenirIdSymboleAdverse(node.symboleDuJoueurActuel);
-                Node n = node.creatAChild(key, value, node.heuristiqueCounter + 1);
+                //System.out.println("Root Node cadre--- :" + rootNode.getMap().toString());
+                //value = JeuUtils.obtenirIdSymboleAdverse(node.symboleDuJoueurActuel);
+                Node n = node.creatAChild(key);
                 //Recursively creat children as long as the heuristic permits.
                 creatChildren(n);
             }
@@ -69,11 +78,11 @@ public class MinmaxTree {
     }
     //Determine le score de chaque noed. 100, -100 ou 0;
     //100 = Max a ganger,    -100 = Min a gagner    0 = egalité.
-    private void minimax(Node n, String joueur){
+    public void minimax(Node n, int joueur){
         /* TO DO: For each children of parent node, recursive call until you find a leaf, give the leaf a score and return the score,
          * For each child leaf a score is returned, depending if the parent is a Min or Max player keep the appropriate score fromm all their children...
          */
-        
+        n.array2DBoard();
         for(int i = 0; i < n.children.size(); i++){
 
         }

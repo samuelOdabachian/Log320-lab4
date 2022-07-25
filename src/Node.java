@@ -5,8 +5,9 @@ import java.util.HashMap;
 public class Node {
 
     //A faire le alpha et le beta.
-    private HashMap <String, Integer> etatCadre;
-    private int[][] board;
+    private HashMap <String, Integer> etatCadre = new HashMap<>();;
+    int[][] board;
+    ArrayList <Node> position;
     ArrayList <Node> children = new ArrayList<Node>();
     int symboleDuJoueurActuel; // 4= X ou 2 = O.
     //The players current decision where to place his symbole "Key".
@@ -23,29 +24,28 @@ public class Node {
     int heuristiqueCounter;
 
     boolean isLeaf = true;
-
-    public Node(){
-        etatCadre = new HashMap<>();
-    }
+    
+    public Node(){}
 
     public Node(HashMap <String, Integer> etatCadre){
-        this.etatCadre = etatCadre;
+        this.etatCadre.putAll(etatCadre);
         pointage = (int)(Math.random() * 100);
     }
     public Node(HashMap <String, Integer> etatCadre, int symboleDuJoueurActuel){
-        this.etatCadre = etatCadre;
+        this.etatCadre.putAll(etatCadre);
         pointage = (int)(Math.random() * 100);
         this.symboleDuJoueurActuel = symboleDuJoueurActuel;
     }
 
     //Recopier le etat du cadre mais faire une seul changement dans d'une position pour dessiner un scenario potentiel. 
-    public Node creatAChild(String key, Integer symboleDuJoueurActuel, int heuristiqueCounter){
-        Node n = new Node(etatCadre,symboleDuJoueurActuel);
-        n.replace(key, symboleDuJoueurActuel);
+    public Node creatAChild(String key){
+       
+        Node n = new Node(etatCadre,JeuUtils.obtenirIdSymboleAdverse(this.symboleDuJoueurActuel));
+        n.replace(key, n.symboleDuJoueurActuel);
         n.decision = key;
         children.add(n);
-        
-        this.heuristiqueCounter = heuristiqueCounter;
+        n.heuristiqueCounter = this.heuristiqueCounter + 1;
+
         this.isLeaf = false;
         if(this.typeNode.equals("Max")){
             n.typeNode = "Min";
@@ -54,12 +54,7 @@ public class Node {
         }
         return n;
     }
-    private void convertMapto2DArray(HashMap <String, Integer> etatCadre){
-        for (HashMap.Entry<String, Integer> entry : etatCadre.entrySet()) {
-            String key = entry.getKey();
-            Integer value = entry.getValue();
-        }
-    }
+    
 
     public void put(String key, Integer value){
         etatCadre.put(key, value);
@@ -71,6 +66,10 @@ public class Node {
 
     public HashMap <String, Integer> getMap(){
         return etatCadre;
+    }
+
+    public void array2DBoard(){
+        this.board = JeuUtils.mapTo2DArray(this.etatCadre);
     }
 
     //A être setter a chaque fois qu'un nouveau niveau s'ajoute dans l'arbre.

@@ -1,3 +1,6 @@
+import java.lang.reflect.Array;
+import java.util.HashMap;
+
 public class JeuUtils {
   
   static final String COLUMN_IDENTIFIERS = "ABCDEFGHI";
@@ -58,4 +61,64 @@ public class JeuUtils {
   public static int obtenirIdSymboleAdverse(int joueurId) {
     return (joueurId == 2) ? 4 : 2;
   }
+
+
+  public static HashMap<String, Integer> initTab(){
+    HashMap<String, Integer> listeCases = new HashMap<String, Integer>();
+
+    for (int i = 1; i <= 9; i++) {
+      String codeCase = Character.toString( JeuUtils.COLUMN_IDENTIFIERS.charAt(i-1) );
+      for (int j = 1; j <= 9; j++) {
+        listeCases.put(codeCase + j, 0);
+      }
+    }
+    return listeCases;
+  }
+
+  public static int[][] mapTo2DArray(HashMap <String, Integer> etatCadre){
+    int[][] board = new int[3][3];
+    int caseNumber;
+    Integer value;
+    String key;
+
+    for (HashMap.Entry<String, Integer> entry : etatCadre.entrySet()) {
+        key = entry.getKey();
+        value = entry.getValue();
+        caseNumber = Integer.parseInt(String.valueOf(key.charAt(1)));  
+
+
+        if(key.charAt(0) == 'A' || key.charAt(0) == 'D' ||key.charAt(0) == 'G'){
+          // le '%' est pour inclure les trois possibilités 1,4 ou 7
+          if(caseNumber % 3 == 1 ){
+            board[2][0]=value;
+          }else if(caseNumber % 3 == 2 ){
+            board[2][1]=value;
+          }else if(caseNumber % 3 == 0 ){
+            board[2][2]=value;
+          }
+        }else if(key.charAt(0)=='B' || key.charAt(0)=='E' ||key.charAt(0)=='H'){
+          if(caseNumber % 3 == 1 ){
+            board[0][0]=value;
+          }else if(caseNumber % 3 == 2 ){
+            board[1][1]=value;
+          }else if(caseNumber % 3 == 0 ){
+            board[1][2]=value;
+          }
+
+        }else if(key.charAt(0)=='C' || key.charAt(0)=='F' ||key.charAt(0)=='I'){
+          if(caseNumber % 3 == 1 ){
+            board[0][0]=value;
+          }else if(caseNumber % 3 == 2 ){
+            board[0][1]=value;
+          }else if(caseNumber % 3 == 0 ){
+            board[0][2]=value;
+          }
+        }
+          
+
+        
+    }
+    return board;
+  }
+
 }

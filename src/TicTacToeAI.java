@@ -21,22 +21,10 @@ public class TicTacToeAI {
   private List<int[]> _listeCadresNonDisponible = new ArrayList<int[]>();
 
   public TicTacToeAI() {
-    this._grilleJeu = this.initTab();
+    this._grilleJeu =  JeuUtils.initTab();
   }
 
-  public HashMap<String, Integer> initTab() {
 
-    HashMap<String, Integer> listeCases = new HashMap<String, Integer>();
-
-    for (int i = 1; i <= 9; i++) {
-      String codeCase = Character.toString( JeuUtils.COLUMN_IDENTIFIERS.charAt(i-1) );
-      for (int j = 1; j <= 9; j++) {
-        listeCases.put(codeCase + j, 0);
-      }
-    }
-  
-    return listeCases;
-  }
 
   /**
    * Code cmd == 4
@@ -145,7 +133,7 @@ public class TicTacToeAI {
 
     MinmaxTree minmaxTree = new MinmaxTree(this._joueurId, this._grilleJeu);
     retirerTousCadresNonDispo(minmaxTree); // on enleve tous les cadres qui ne sont plus dispo
-    minmaxTree.creatTree(cadre, JeuUtils.obtenirIdSymboleAdverse(this._joueurId));
+    minmaxTree.creatTree(cadre);
 
     String meilleureDecision = minmaxTree.genererMeilleurDecision(cadre);
 
