@@ -10,6 +10,8 @@ public class TEST {
 
         System.out.println("TEST ");
         System.out.println("Root Node cadre :" + root.getMap().toString());
+        //ALSO test if nodes are well min and max seperate.
+        //TEST the minimax method
 
         /*Children of root
         for(int i = 0; i < root.children.size(); i++ ){

@@ -68,8 +68,8 @@ public class Node {
         return etatCadre;
     }
 
-    public void array2DBoard(){
-        this.board = JeuUtils.mapTo2DArray(this.etatCadre);
+    public int[][] array2DBoard(){
+        return this.board = JeuUtils.mapTo2DArray(this.etatCadre);
     }
 
     //A être setter a chaque fois qu'un nouveau niveau s'ajoute dans l'arbre.

@@ -38,12 +38,7 @@ public class MinmaxTree {
         for(int i = 0; i < positions.length; i++ ){
             value = this._etatCases.get(positions[i]);
             rootNode.put(positions[i],value);
-            // working System.out.println("Key:" + positions[i]);
-        }
-        for (HashMap.Entry<String, Integer> entry : rootNode.getMap().entrySet()) {
-            String key = entry.getKey();
-            Integer value2 = entry.getValue();
-          
+            
         }
         creatChildren(rootNode);
     }
@@ -78,21 +73,53 @@ public class MinmaxTree {
     }
     //Determine le score de chaque noed. 100, -100 ou 0;
     //100 = Max a ganger,    -100 = Min a gagner    0 = egalité.
-    public void minimax(Node n, int joueur){
+    public int minimax(Node n, int symboleJoueur, String typeJoueur){
         /* TO DO: For each children of parent node, recursive call until you find a leaf, give the leaf a score and return the score,
          * For each child leaf a score is returned, depending if the parent is a Min or Max player keep the appropriate score fromm all their children...
          */
+        Node nChild;
+        int score;
+        int maxScore;
+        int minScore;
+
+        if(n.isLeaf == true){
+            //check the node`s board and wright in it a score and return the score
+                
+            score = scoreCalculator(n.array2DBoard(),n.symboleDuJoueurActuel);
+            n.pointage = score;
+            return score;
+        }
+
+        if(typeJoueur.equals("Max")){
+            maxScore = -100;
+            
+            for(int i = 0; i < n.children.size(); i ++){
+                nChild = n.children.get(i);
+                score = minimax(nChild,nChild.symboleDuJoueurActuel,"Min");
+                maxScore = Math.max(maxScore,score);
+            }
+            n.pointage = maxScore;
+        }else if(typeJoueur.equals("Min")){
+            minScore = 100;
+
+            for(int i = 0; i < n.children.size(); i ++){
+                nChild = n.children.get(i);
+                score = minimax(nChild,nChild.symboleDuJoueurActuel,"Max");
+                maxScore = Math.min(minScore,score);
+            }
+            n.pointage = minScore;
+        } 
+        
+
+        //call a score creator function that will examin the cadre and give it a score according to Max players symbole. Make the score follow up the tree
+   
         n.array2DBoard();
         for(int i = 0; i < n.children.size(); i++){
 
         }
+        return score;
         
-        if(n.isLeaf == true){
-            //check the node`s board and wright in it a score and return the score
-            //return score;
-        }
-        //call a score creator function that will examin the cadre and give it a score according to Max players symbole. Make the score follow up the tree
-    }
+      }
 
     /*
      * Big function to detrmine what score to give the leaf cadre scenario
