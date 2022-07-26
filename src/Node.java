@@ -6,14 +6,14 @@ public class Node {
 
     //A faire le alpha et le beta.
     private HashMap <String, Integer> etatCadre = new HashMap<>();;
-    int[][] board;
+    int[][] board = null;
     ArrayList <Node> position;
     ArrayList <Node> children = new ArrayList<Node>();
     int symboleDuJoueurActuel; // 4= X ou 2 = O.
     //The players current decision where to place his symbole "Key".
     String decision;
     //The risk factor of the potential decision. 
-    int pointage;
+    int pointage = 0;
     //Le meilleur pointage du succeseur du noeud MAX (le noed pour lequel le tour a jouer et notre joueur) 
     int alpha;
     //Inverse pour le noed MIN.
@@ -29,11 +29,11 @@ public class Node {
 
     public Node(HashMap <String, Integer> etatCadre){
         this.etatCadre.putAll(etatCadre);
-        pointage = (int)(Math.random() * 100);
+        
     }
     public Node(HashMap <String, Integer> etatCadre, int symboleDuJoueurActuel){
         this.etatCadre.putAll(etatCadre);
-        pointage = (int)(Math.random() * 100);
+       
         this.symboleDuJoueurActuel = symboleDuJoueurActuel;
     }
 
@@ -52,6 +52,7 @@ public class Node {
         }else if(this.typeNode.equals("Min")){
             n.typeNode = "Max";
         }
+        
         return n;
     }
     
@@ -71,6 +72,7 @@ public class Node {
     public int[][] array2DBoard(){
         return this.board = JeuUtils.mapTo2DArray(this.etatCadre);
     }
+
 
     //A être setter a chaque fois qu'un nouveau niveau s'ajoute dans l'arbre.
     public void setSymbole(int symboleDuJoueurActuel){

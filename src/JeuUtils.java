@@ -90,26 +90,29 @@ public class JeuUtils {
         if(key.charAt(0) == 'A' || key.charAt(0) == 'D' ||key.charAt(0) == 'G'){
           // le '%' est pour inclure les trois possibilités 1,4 ou 7
           if(caseNumber % 3 == 1 ){
+            // board[row][colomn]
             board[2][0]=value;
+            //2,4 ou 8
           }else if(caseNumber % 3 == 2 ){
-            board[2][1]=value;
+            board[1][0]=value;
+            // 3,6 ou 9
           }else if(caseNumber % 3 == 0 ){
-            board[2][2]=value;
+            board[0][0]=value;
           }
         }else if(key.charAt(0)=='B' || key.charAt(0)=='E' ||key.charAt(0)=='H'){
           if(caseNumber % 3 == 1 ){
-            board[0][0]=value;
+            board[2][1]=value;
           }else if(caseNumber % 3 == 2 ){
             board[1][1]=value;
           }else if(caseNumber % 3 == 0 ){
-            board[1][2]=value;
+            board[0][1]=value;
           }
 
         }else if(key.charAt(0)=='C' || key.charAt(0)=='F' ||key.charAt(0)=='I'){
           if(caseNumber % 3 == 1 ){
-            board[0][0]=value;
+            board[2][2]=value;
           }else if(caseNumber % 3 == 2 ){
-            board[0][1]=value;
+            board[1][2]=value;
           }else if(caseNumber % 3 == 0 ){
             board[0][2]=value;
           }
@@ -121,4 +124,27 @@ public class JeuUtils {
     return board;
   }
 
+  public static void detailsNode(Node n){
+    System.out.println("Current board ");
+        printBorad(n.array2DBoard());
+        System.out.println(n.toString() + " type is: " + n.typeNode + " Heuristique: " + n.heuristiqueCounter + " Decision: "+ n.decision);
+                
+        System.out.println("Score returned for this board: " + n.pointage + " joueurActuel: " +n.symboleDuJoueurActuel);
+        
+  }
+
+  public static void printBorad(int[][] board){
+
+    String printBoard = "";
+    for(int i = 0; i < 3; i++){
+        printBoard += "\n";
+        for(int j =0; j < 3; j++){
+            printBoard += board[i][j] + " ";
+        }
+    }
+    
+    System.out.println(printBoard);
+    
+
+  }
 }
