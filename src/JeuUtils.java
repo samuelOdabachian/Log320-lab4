@@ -125,11 +125,19 @@ public class JeuUtils {
   }
 
   public static void detailsNode(Node n){
+    int alphaBeta = 0;  
+    String type = "  ";
     System.out.println("Current board ");
-        printBorad(n.array2DBoard());
-        System.out.println(n.toString() + " type is: " + n.typeNode + " Heuristique: " + n.heuristiqueCounter + " Decision: "+ n.decision);
-                
-        System.out.println("Score returned for this board: " + n.pointage + " joueurActuel: " +n.symboleDuJoueurActuel);
+      printBorad(n.array2DBoard());
+      System.out.println(n.toString() + " type is: " + n.typeNode + " Heuristique: " + n.heuristiqueCounter + " Decision: "+ n.decision);
+      if(n.typeNode.equals("Max")){
+        alphaBeta = n.alpha;
+        type = " Alpha: ";
+      }else if(n.typeNode.equals("Min")){
+        alphaBeta = n.beta;
+        type = " Beta: ";
+      }
+      System.out.println("Score returned for this board: " + n.pointage + " joueurActuel: " +n.symboleDuJoueurActuel + type + alphaBeta );
         
   }
 

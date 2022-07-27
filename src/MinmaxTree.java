@@ -40,6 +40,8 @@ public class MinmaxTree {
             
         }
         creatChildren(rootNode);
+        //minimax(rootNode,rootNode.alpha,null );
+        
     }
 
     //Pour chaque case vide, créer un scenario possible avec le choix fait. Configurer le alpha et beta aussi
@@ -56,26 +58,19 @@ public class MinmaxTree {
                 //Recursively creat children as long as the heuristic permits.
                 creatChildren(n);
             }
-            //Set le alpha et le beta en identifiant si c'est un noed max ou min.
+           
             
-            if (node.typeNode != null) {
-                if(node.typeNode.equals("max")){
-                    node.alpha = trouverPointageMax(node);
-                    // System.out.println("alpha: "+node.alpha);
-                }else if(node.typeNode.equals("min")){
-                    node.beta = trouverPointageMin(node);
-                    // System.out.println("beta: "+node.beta);
-                }
-            }
+           
+            
         }
     }
-    //Determine le score de chaque noed. 100, -100 ou 0;
-    //100 = Max a ganger,    -100 = Min a gagner    0 = egalité.
-    public int minimax(Node n, String typeJoueur){
+    
+    public int minimax(Node n, int a, int b){
         /* TO DO: For each children of parent node, recursive call until you find a leaf, give the leaf a score and return the score,
          * For each child leaf a score is returned, depending if the parent is a Min or Max player keep the appropriate score fromm all their children...
          */
         Node nChild;
+        String typeJoueur = n.typeNode;
         int score = 0;
         int maxScore =-100;
         int minScore = 100;
@@ -85,37 +80,45 @@ public class MinmaxTree {
         if(n.isLeaf == true){
             //check the node`s board and wright in it a score and return the score
                 
-            score = scoreCalculatorRemake(n.array2DBoard(),n.symboleDuJoueurActuel);
+            score = scoreCalculator(n.array2DBoard(), n.symboleDuJoueurActuel);
             n.pointage = score;
             JeuUtils.detailsNode(n);
-            if(n.typeNode.equals("Min")){
-                score = -1* score; 
-            }
+            
             return score;
         }
-
+        //Do alpha beta and root node will return an unused beta value. First recursion dept of level 2, checks its the leaf and keeps the score 
+        //for alpha if beta permits(first recursion beta is -100 so yes),
+        //Second recursion, beta now has a value, so level 2 depts compares current a with beta all the time before it continues the search. 
+        //In that level, if a > than b then stop the recurson....eventualy use this methode to generate the tree and stop creating branches that dont matter.
+        //Root node will have a beat value big enouph to not influence the best choice...I think
         if(typeJoueur.equals("Max")){
-            
+            int b = 100;
+            int a = -100;
             
             for(int i = 0; i < n.children.size(); i ++){
                 nChild = n.children.get(i);
-                score = minimax(nChild,"Min");
-                maxScore = Math.max(maxScore,score);
+                score = minimax(nChild);
+                a = Math.max(a,score);
+                b = Math.min(a,b);
+                if(a >= b){
+                    n.alpha = a;
+                    return maxScore;
+                }
             }
-            n.pointage = maxScore;
+            
           
-            return maxScore;
         }else if(typeJoueur.equals("Min")){
             
 
             for(int i = 0; i < n.children.size(); i ++){
                 nChild = n.children.get(i);
               
-                score = minimax(nChild,"Max");
+                score = minimax(nChild);
                 minScore = Math.min(minScore,score);
             }
             n.pointage = minScore;
-            
+            JeuUtils.detailsNode(n);
+
             return minScore;
         } 
 
@@ -126,7 +129,7 @@ public class MinmaxTree {
       }
 
     //scoreCalculator version 2!
-    public int scoreCalculatorRemake(int[][] board, int joueurActuel){
+    public int scoreCalculator(int[][] board, int joueurActuel){
         
         int joueurAdverse = JeuUtils.obtenirIdSymboleAdverse(joueurActuel);
 
@@ -145,7 +148,9 @@ public class MinmaxTree {
         int counter;
         int adversityCounter;
         int score = 0;
-        //horizontal
+        
+        
+        //Verification horizontal
         for(int i = 0; i < 3; i++){
             counter =0;
             adversityCounter = 0;
@@ -157,6 +162,7 @@ public class MinmaxTree {
                 }
 
                 score = compareScore(counter, adversityCounter, score);
+                //Return socre of 5 witch is tictactoe.
                 if (score == 5){
                     return score;
                 }
@@ -164,7 +170,7 @@ public class MinmaxTree {
         }
 
 
-        //Verticale
+        //Verification Verticale
         for(int i = 0; i < 3; i++){
             counter = 0;
             adversityCounter = 0;
@@ -181,7 +187,7 @@ public class MinmaxTree {
             }
         }
 
-        //Diagonal top right corner
+        //Verification Diagonal top right corner
         counter = 0;
         adversityCounter = 0;
         int j=0;
@@ -200,7 +206,7 @@ public class MinmaxTree {
         }
 
 
-        //Diagonal top left corner
+        //Verification Diagonal top left corner
         counter = 0;
         adversityCounter = 0;
         j=2;
@@ -218,10 +224,11 @@ public class MinmaxTree {
             }
         return score;
     }
+
+
     //Recois les counter et done une score approprié.
     private int compareScore(int counter, int adversityCounter, int score){
         
-
         if(counter == 3){
             //Tictacto is the best score so emidiate return
             return 5;
@@ -237,7 +244,7 @@ public class MinmaxTree {
 
     //Trouve le pointage min des enfant d'un noed MIN  
     public int trouverPointageMin(Node n){
-        int beta = Integer.MAX_VALUE;
+        int beta = 100;
         for(int i = 0; i < n.children.size(); i++){
             if(n.children.get(i).pointage <= beta){
                 beta = n.children.get(i).pointage;
