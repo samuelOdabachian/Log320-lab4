@@ -5,11 +5,11 @@ public class TEST {
         int[] cadre = {2,2};
         HashMap<String, Integer> map = JeuUtils.initTab();
         map.replace("F6", 2);
-        //map.replace("D5", 2);
+       // map.replace("F5", 2);
         MinmaxTree mTree = new MinmaxTree(4, map);
         mTree.creatTree(cadre);
         Node root = mTree.rootNode; 
-        root.decision = "F6";
+        root.decision = "D6";
         Node testNode = new Node();
         int [][] board ={{4,0,0},{0,2,0},{0,0,0}};
         Node rootChild1 = root.children.get(0);

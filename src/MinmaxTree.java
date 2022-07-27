@@ -85,7 +85,7 @@ public class MinmaxTree {
         if(n.isLeaf == true){
             //check the node`s board and wright in it a score and return the score
                 
-            score = scoreCalculator(n.array2DBoard(),n.symboleDuJoueurActuel, 1);
+            score = scoreCalculatorRemake(n.array2DBoard(),n.symboleDuJoueurActuel);
             n.pointage = score;
             JeuUtils.detailsNode(n);
             if(n.typeNode.equals("Min")){
@@ -125,137 +125,26 @@ public class MinmaxTree {
         
       }
 
-    /*
-     * Big function to detrmine what score to give the leaf cadre scenario
-     */
-    public int scoreCalculator(int[][] board, int joueurActuel, int limiter){
-        int joueurAdverse = JeuUtils.obtenirIdSymboleAdverse(joueurActuel);
-        int score =0;
-        if(board[0][0] != joueurAdverse){
-            //if isTripplet or twin(twin has to check if third case is empty), for all directions from starting point then score is added
-            if(board[0][0] == joueurActuel){
-                if(board[0][1] == joueurActuel && board[0][2] == joueurActuel){//TictacToe first ligne. 5 points
-                    System.out.println(board[0][1]+ " " + board[0][2] + " " +  joueurActuel);
-                    return score = 5;
-                }else if(board[0][1] == joueurActuel && board[0][2] == 0){ //first ligne XX_
-                    //give a score for a twin
-                    score = 2;
-                    if(board[0][2] == joueurAdverse){score = -1;}
-                }else if(board[0][1] == 0 && board[0][2] == joueurActuel){ //First ligne variant X_X
-                    score = 2;
-                    if(board[0][1] == joueurAdverse){score = -1;}
-                }else if(board[1][1] == joueurActuel && board[2][2] == joueurActuel){//Tictactoe Diagonal from top left corner
-                    return score = 5;
-                }else if(board[1][1] == 0 && board[2][2] == joueurActuel){//Diagonal twin from top left corner. 
-                    score = 2;
-                    if(board[1][1] == joueurAdverse){score = -1;}
-                }else if(board[1][1] == joueurActuel && board[2][2] == 0){//Diagonal twin from top left corner variant. 
-                    score = 2;
-                }else if(board[1][0] == joueurActuel && board[2][0] == joueurActuel){//Tictacttoe first colomn
-                    return score = 5;
-                }else if(board[1][0] == 0 && board[2][0] == joueurActuel){//Twin first colomn
-                    score = 2;
-                }else if(board[1][0] == joueurActuel && board[2][0] == 0){//Twin first colomn variant
-                    score = 2;
-                }
-            }else if(board[0][0] == 0){
-                if(board[0][1] == joueurActuel && board[0][2] == joueurActuel){ //First ligne  _XX
-                    score = 2;
-                }else if(board[1][1] == joueurActuel && board[2][2] == joueurActuel){//Diagonal from top left corner . 
-                    score = 2;
-                }else if(board[1][0] == joueurActuel && board[2][0] == joueurActuel){//First colomn
-                    score = 2;
-                }
-         
-            }
-        }if(board[1][0] != joueurAdverse){
-            if(board[1][0] == joueurActuel){
-                
-                if(board[1][1] == joueurActuel && board[1][2] == joueurActuel){// tictactoe seond ligne
-                    return score = 5;
-                }else if(board[1][1] == joueurActuel && board[1][2] == 0){//Second ligne XX_
-                    score = 2;
-                }else if(board[1][1] == 0 && board[1][2] == joueurActuel){//Second ligne variant X_X
-                    score = 2;
-                }
-            }else if(board[1][0] == 0 && board[1][1] == joueurActuel && board[1][2] == joueurActuel){//Second ligne _XX
-                score = 2;
-            }
-
-        }if(board[2][0] != joueurAdverse){
-            if(board[2][0] == joueurActuel){
-                if(board[2][1] == joueurActuel && board[2][2] == joueurActuel){//Tictacttoe third ligne
-                    return score = 5  ;
-                }else if(board[2][1] == joueurActuel && board[2][2] == 0){ //Third ligne XX_
-                    score = 2;
-                }else if(board[2][1] == 0 && board[2][2] == joueurActuel){//Third ligne X_X
-                    score = 2;
-                }
-            }else if(board[2][0] == 0){
-                
-                 if(board[2][1] == joueurActuel && board[2][2] == joueurActuel){//Third ligne _XX
-                    score = 2;
-                }
-            }
-        }if(board[0][1] != joueurAdverse){
-            if(board[0][1] == joueurActuel){
-                if(board[1][1] == joueurActuel && board[2][1] == joueurActuel){//Tictacttoe midlle colomn
-                    return score = 5;
-                }else if(board[1][1] == joueurActuel && board[2][1] == 0){//Second Colomn XX_
-                    score = 2;
-                }else if(board[1][1] == 0 && board[2][1] == joueurActuel){//Second colomn variant X_X
-                    score = 2;
-                }
-            }else if(board[0][1] == 0){
-                if(board[1][1] == joueurActuel && board[2][1] == joueurActuel){//Second colomn variant _XX
-                    score = 2;
-                }
-            }
-        }if(board[0][2] != joueurAdverse){
-            if(board[0][2] == joueurActuel){
-                if(board[1][2] == joueurActuel && board[2][2] == joueurActuel){//Tictactoe third colomn
-                    return score = 5;
-                }else if(board[1][1] == joueurActuel && board[2][0] == joueurActuel){//Tictactoe Diagonal top right corner
-                    return score = 5;
-                }else if(board[1][2] == joueurActuel && board[2][2] == 0){//Third colomn XX_
-                    score = 2;
-                }else if(board[1][2] == 0 && board[2][2] == joueurActuel){//Third Colomn variant X_X
-                    score = 2;
-                }
-            }else if(board[0][2] == 0){
-                if(board[1][2] == joueurActuel && board[2][2] == joueurActuel){//third colomn variant XX_
-                    score = 2;
-                }
-            }//Cette methode regard le board selon le point de vue du joueur actuel, il y a donc des angles morts.
-            
-
-        }
-        if(limiter <2){
-            int scoreAdversaire = scoreCalculator(board, joueurAdverse, 2);
-            if(scoreAdversaire > score){
-                score = -1* scoreAdversaire;
-            }
-        }
-       
-
-        
-        
-    return score;
-    }
-
     //scoreCalculator version 2!
-    public int scoreCalculatorRemake(int[][] board, int joueurActuel, int limiter){
+    public int scoreCalculatorRemake(int[][] board, int joueurActuel){
         
         int joueurAdverse = JeuUtils.obtenirIdSymboleAdverse(joueurActuel);
 
         int score = lineairCalculator(board,joueurActuel,joueurAdverse);
-
+        int sccoreSelonAdversaire = lineairCalculator(board, joueurAdverse, joueurActuel);
+        
+        if(score <= sccoreSelonAdversaire){
+            score = -1* sccoreSelonAdversaire;
+        }
         return score;
 
     }
-    public int lineairCalculator(int[][] board, int joueurActuel, int joueurAdverse){
+
+    //verifie lineairement les ligne horizontal, vertical et diagonal pour trouver un tictactoe ou un twin, ainsi que des gaspillage de tours.
+    private int lineairCalculator(int[][] board, int joueurActuel, int joueurAdverse ){
         int counter;
         int adversityCounter;
+        int score = 0;
         //horizontal
         for(int i = 0; i < 3; i++){
             counter =0;
@@ -266,19 +155,18 @@ public class MinmaxTree {
                 }else if(board[i][j] == joueurAdverse){
                     adversityCounter++;
                 }
-                if(counter == 2 && adversityCounter == 0){
-                    return 2;
-                }else if(counter == 3){
-                    return 5;
-                }else if(counter == 2 && adversityCounter == 1){
-                    //On ne veut pas ajouter a une ligne qui contient déjà un adversaire et au moin un de notre. (gaspillage de tour)
-                    return -1;
+
+                score = compareScore(counter, adversityCounter, score);
+                if (score == 5){
+                    return score;
                 }
             }
         }
+
+
         //Verticale
         for(int i = 0; i < 3; i++){
-            counter =0;
+            counter = 0;
             adversityCounter = 0;
             for(int j = 0; j < 3; j++){
                 if(board[j][i] == joueurActuel ){
@@ -286,29 +174,65 @@ public class MinmaxTree {
                 }else if(board[j][i] == joueurAdverse){
                     adversityCounter++;
                 }
-                if(counter == 2 && adversityCounter == 0){
-                    return 2;
-                }else if(counter == 3){
-                    return 5;
-                }else if(counter == 2 && adversityCounter == 1){
-                    return -1;
+                score = compareScore(counter, adversityCounter,score);
+                if (score == 5){
+                    return score;
                 }
             }
         }
 
-        //To DO Diagonal........
+        //Diagonal top right corner
+        counter = 0;
+        adversityCounter = 0;
+        int j=0;
+        for(int i = 0; i < 3; i++){
+           
+            if(board[i][j] == joueurActuel ){
+                counter++;
+            }else if(board[i][j] == joueurAdverse){
+                adversityCounter++;
+            }
+            j++;
+        }
+        score = compareScore(counter, adversityCounter, score);
+        if (score == 5){
+            return score;
+        }
 
 
-
-
-
-
-
-
-
+        //Diagonal top left corner
+        counter = 0;
+        adversityCounter = 0;
+        j=2;
+        for(int i = 0; i < 3; i++){
+            if(board[i][j] == joueurActuel ){
+                counter++;
+            }else if(board[i][j] == joueurAdverse){
+                adversityCounter++;
+            }
+            j--;
+        }
+            score = compareScore(counter, adversityCounter, score);
+            if (score == 5){
+                return score;
+            }
+        return score;
+    }
+    //Recois les counter et done une score approprié.
+    private int compareScore(int counter, int adversityCounter, int score){
         
-        return 0;
-        
+
+        if(counter == 3){
+            //Tictacto is the best score so emidiate return
+            return 5;
+        }else if(score == 0 && counter == 2 && adversityCounter == 0){
+            //Else it is a twin
+            score =2;
+        }else if(score == 0 && counter == 2 && adversityCounter == 1){
+            //On ne veut pas ajouter a une ligne qui contient déjà un adversaire et au moin un de notre. (gaspillage de tour)
+            score = -1;
+        }
+        return score;
     }
 
     //Trouve le pointage min des enfant d'un noed MIN  
