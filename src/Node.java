@@ -31,10 +31,10 @@ public class Node {
         this.etatCadre.putAll(etatCadre);
         
     }
-    public Node(HashMap <String, Integer> etatCadre, int symboleDuJoueurActuel){
+    public Node(HashMap <String, Integer> etatCadre, int symboleDuDernierJoeur){
         this.etatCadre.putAll(etatCadre);
        
-        this.symboleDuJoueurActuel = symboleDuJoueurActuel;
+        this.symboleDuJoueurActuel = JeuUtils.obtenirIdSymboleAdverse(symboleDuDernierJoeur);
     }
 
     //Recopier le etat du cadre mais faire une seul changement dans d'une position pour dessiner un scenario potentiel. 
@@ -46,6 +46,7 @@ public class Node {
         children.add(n);
         n.heuristiqueCounter = this.heuristiqueCounter + 1;
 
+        
         this.isLeaf = false;
         if(this.typeNode.equals("Max")){
             n.typeNode = "Min";

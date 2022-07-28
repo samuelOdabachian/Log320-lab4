@@ -127,17 +127,18 @@ public class JeuUtils {
   public static void detailsNode(Node n){
     int alphaBeta = 0;  
     String type = "  ";
-    System.out.println("Current board ");
-      printBorad(n.array2DBoard());
-      System.out.println(n.toString() + " type is: " + n.typeNode + " Heuristique: " + n.heuristiqueCounter + " Decision: "+ n.decision);
-      if(n.typeNode.equals("Max")){
-        alphaBeta = n.alpha;
-        type = " Alpha: ";
-      }else if(n.typeNode.equals("Min")){
-        alphaBeta = n.beta;
-        type = " Beta: ";
-      }
-      System.out.println("Score returned for this board: " + n.pointage + " joueurActuel: " +n.symboleDuJoueurActuel + type + alphaBeta );
+    int[][] rootBoard = n.array2DBoard();
+
+    System.out.println("Current Tree:   Parent node" + "\n");
+    printBorad(n.array2DBoard());
+    printDetails(n);
+    System.out.println("\n" + "\n" + "\n" + "Children of parent: ");
+    
+
+    for(int i = 0; i <n.children.size(); i++ ){
+      printBorad(n.children.get(i).array2DBoard());
+      printDetails(n.children.get(i));
+    }
         
   }
 
@@ -151,8 +152,21 @@ public class JeuUtils {
         }
     }
     
-    System.out.println(printBoard);
+    System.out.println(printBoard); 
     
 
+  }
+
+  public static void printDetails(Node n){
+    int alphaBeta =0;
+    String type = "";
+      if(n.typeNode.equals("Max")){
+        alphaBeta = n.alpha;
+        type = "   Alpha: ";
+      }else if(n.typeNode.equals("Min")){
+        alphaBeta = n.beta;
+        type = "   Beta: ";
+      }
+      System.out.println("  -Type is: " + n.typeNode + "   Decision: " + n.decision + "   score = " + n.pointage + "    joueurActuel: " +n.symboleDuJoueurActuel + type + alphaBeta );
   }
 }

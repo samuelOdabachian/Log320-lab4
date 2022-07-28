@@ -5,8 +5,8 @@ public class TEST {
         int[] cadre = {2,2};
         HashMap<String, Integer> map = JeuUtils.initTab();
         map.replace("F6", 2);
-       // map.replace("F5", 2);
-        MinmaxTree mTree = new MinmaxTree(4, map);
+        map.replace("F5", 2);
+        MinmaxTree mTree = new MinmaxTree(2, map);
         mTree.creatTree(cadre);
         Node root = mTree.rootNode; 
         root.decision = "D6";
@@ -59,7 +59,8 @@ public class TEST {
         System.out.println("Board: "+ printBoard);
         */
 
-        mTree.minimax(root, root.typeNode);
+        mTree.minimax(root, -100, 100);
+        JeuUtils.detailsNode(root);
         //System.out.println("RootChild1 score:"+ rootChild1.pointage);
 
 

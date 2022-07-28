@@ -1,5 +1,6 @@
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 //Tree a interoger pour savoir les pourcentages de ganger pour chaque coups possible. Il faut recréer le tree
 //après chaque coup. Donc le tree n'est pas statique.
@@ -9,11 +10,11 @@ public class MinmaxTree {
 
     private HashMap <String, Integer> _etatCases = new HashMap<String, Integer>();
     int[] cadre;
-    int symboleDuJoeur;//X ou O.
+    int symboleDuDernierJoeur;//X ou O.
     Node rootNode;
 
-    public MinmaxTree(int symboleDuJoueur, HashMap<String, Integer> etatGrilleJeu) {
-        this.symboleDuJoeur = symboleDuJoueur;
+    public MinmaxTree(int symboleDuDernierJoeur, HashMap<String, Integer> etatGrilleJeu) {
+        this.symboleDuDernierJoeur = symboleDuDernierJoeur;
         this._etatCases.putAll(etatGrilleJeu);
         // this._etatCases = etatGrilleJeu;
     }
@@ -27,7 +28,7 @@ public class MinmaxTree {
         String[] positions = obtenirListeCases(interval);
         System.out.println("Positions possibles: " + Arrays.toString(positions));
         rootNode = new Node();
-        rootNode.setSymbole(symboleDuJoeur);
+        rootNode.setSymbole(symboleDuDernierJoeur);
         rootNode.typeNode = "Max";
         rootNode.heuristiqueCounter = 0;
         
@@ -71,59 +72,60 @@ public class MinmaxTree {
          */
         Node nChild;
         String typeJoueur = n.typeNode;
-        int score = 0;
-        int maxScore =-100;
-        int minScore = 100;
-        
+        int score = 0; 
+        int bTemporaire = 0;
+        int aTemporaire = 0;
     
-
+        //Recursevely creat tree, check if it is tictactoe(to determin if isLeaf) every time.
+        // Maybe have the heuristique count turns and at a certain point, if it is possible to have leafs than start to check that level for tictactoes
         if(n.isLeaf == true){
             //check the node`s board and wright in it a score and return the score
-                
             score = scoreCalculator(n.array2DBoard(), n.symboleDuJoueurActuel);
             n.pointage = score;
-            JeuUtils.detailsNode(n);
+            System.out.println(score);
+            //JeuUtils.detailsNode(n);
             
             return score;
         }
-        //Do alpha beta and root node will return an unused beta value. First recursion dept of level 2, checks its the leaf and keeps the score 
-        //for alpha if beta permits(first recursion beta is -100 so yes),
-        //Second recursion, beta now has a value, so level 2 depts compares current a with beta all the time before it continues the search. 
-        //In that level, if a > than b then stop the recurson....eventualy use this methode to generate the tree and stop creating branches that dont matter.
-        //Root node will have a beat value big enouph to not influence the best choice...I think
+        
         if(typeJoueur.equals("Max")){
-            int b = 100;
-            int a = -100;
+            String values = "";    
+            aTemporaire = -100;
             
             for(int i = 0; i < n.children.size(); i ++){
                 nChild = n.children.get(i);
-                score = minimax(nChild);
-                a = Math.max(a,score);
-                b = Math.min(a,b);
-                if(a >= b){
-                    n.alpha = a;
-                    return maxScore;
+                
+                score = minimax(nChild,Math.max(a,aTemporaire),b);
+                aTemporaire = Math.max(aTemporaire,score);
+                values += " Child number: " + i + " returned score = " + score;
+                if(aTemporaire >= b){
+                    n.alpha = aTemporaire;
+                    //JeuUtils.detailsNode(n);
+                    return aTemporaire;
                 }
+                //System.out.println(values);
             }
-            
+            n.alpha = aTemporaire;
+            return aTemporaire;
           
         }else if(typeJoueur.equals("Min")){
             
+            bTemporaire = 100;
 
             for(int i = 0; i < n.children.size(); i ++){
                 nChild = n.children.get(i);
-              
-                score = minimax(nChild);
-                minScore = Math.min(minScore,score);
+                score = minimax(nChild,a,Math.min(b,bTemporaire));
+                bTemporaire = Math.min(bTemporaire,score);
+                if(bTemporaire <= a){
+                    n.beta = bTemporaire;
+                    //JeuUtils.detailsNode(n);
+                    return bTemporaire;
+                }
             }
-            n.pointage = minScore;
-            JeuUtils.detailsNode(n);
-
-            return minScore;
+            n.beta = bTemporaire;
+            return bTemporaire;
         } 
 
-        
-        
         return score;
         
       }
