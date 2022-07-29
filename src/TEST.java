@@ -11,8 +11,9 @@ public class TEST {
         Node root = mTree.rootNode; 
         root.decision = "D6";
         Node testNode = new Node();
-        int [][] board ={{4,0,0},{0,2,0},{0,0,0}};
-        Node rootChild1 = root.children.get(0);
+        
+    
+       // Node rootChild1 = root.children.get(0);
 
 
         /*
@@ -59,9 +60,12 @@ public class TEST {
         System.out.println("Board: "+ printBoard);
         */
 
-        mTree.minimax(root, -100, 100);
+        //mTree.minimax(root, -100, 100);
+        //mTree.determinTicTacToe(root);
         JeuUtils.detailsNode(root);
         //System.out.println("RootChild1 score:"+ rootChild1.pointage);
+
+       
 
 
         

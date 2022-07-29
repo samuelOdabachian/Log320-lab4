@@ -138,6 +138,9 @@ public class JeuUtils {
     for(int i = 0; i <n.children.size(); i++ ){
       printBorad(n.children.get(i).array2DBoard());
       printDetails(n.children.get(i));
+      if(n.children.get(i).pointage == 5){
+        System.out.println("This node has children : " + n.children.get(i).children.size());
+      }
     }
         
   }

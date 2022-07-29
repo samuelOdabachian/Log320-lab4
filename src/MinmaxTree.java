@@ -6,12 +6,17 @@ import java.util.concurrent.atomic.AtomicBoolean;
 //après chaque coup. Donc le tree n'est pas statique.
 //Il faut reécrire dans le tree les positions et options possible dans le case 3x3 envisager. 
 //Le tree envoie le meilleur choix possible après des calcules internes.
+
+//Idées: le beta decide s'il faut arreter de construire l'arbre. le scoreCalculator ne calcule plus les tictactoes car on le fait a chaque fois
+//pour determiner s'il est un leaf. Sinon, un node est automatiquement un leaf si la creation d'enfant arrete.
+//The children creator in a node will determine using heuristique and tictactoe detecter if the node is a leaf or not every time it is created.
 public class MinmaxTree {
 
     private HashMap <String, Integer> _etatCases = new HashMap<String, Integer>();
     int[] cadre;
     int symboleDuDernierJoeur;//X ou O.
     Node rootNode;
+    
 
     public MinmaxTree(int symboleDuDernierJoeur, HashMap<String, Integer> etatGrilleJeu) {
         this.symboleDuDernierJoeur = symboleDuDernierJoeur;
@@ -23,12 +28,12 @@ public class MinmaxTree {
     //Dépendant de la liste de position à checker donné, la methode va interoger le hashMap pour
     //savoir l'état et construire l'arbre.
     //Il va construir l'état actuel avec des enfant designants les états future dependant des choix fait.
-    //Il doit être capable de générer les hashmaps à partie des hashmaps. 
+
     public void creatTree(int[] interval ){
         String[] positions = obtenirListeCases(interval);
         System.out.println("Positions possibles: " + Arrays.toString(positions));
         rootNode = new Node();
-        rootNode.setSymbole(symboleDuDernierJoeur);
+        rootNode.setSymbole(symboleDuDernierJoeur);//Doit changer pour le joueur adverse du dernier joueur
         rootNode.typeNode = "Max";
         rootNode.heuristiqueCounter = 0;
         
@@ -40,8 +45,8 @@ public class MinmaxTree {
             rootNode.put(positions[i],value);
             
         }
-        creatChildren(rootNode);
-        //minimax(rootNode,rootNode.alpha,null );
+        //creatChildren(rootNode);
+        minimax(rootNode,-100, 100 );
         
     }
 
@@ -76,52 +81,69 @@ public class MinmaxTree {
         int bTemporaire = 0;
         int aTemporaire = 0;
     
-        //Recursevely creat tree, check if it is tictactoe(to determin if isLeaf) every time.
+        //If the node has no score already then do scorecalculator.
         // Maybe have the heuristique count turns and at a certain point, if it is possible to have leafs than start to check that level for tictactoes
-        if(n.isLeaf == true){
+        if(n.isLeaf == true || n.heuristiqueCounter == 2){
             //check the node`s board and wright in it a score and return the score
+            if(Math.abs(n.pointage) == 5){
+                //System.out.println("Le node a un core de 5 apparament :  "+ n.pointage);
+                return n.pointage;
+            }
             score = scoreCalculator(n.array2DBoard(), n.symboleDuJoueurActuel);
             n.pointage = score;
-            System.out.println(score);
-            //JeuUtils.detailsNode(n);
             
             return score;
         }
         
         if(typeJoueur.equals("Max")){
-            String values = "";    
+               
             aTemporaire = -100;
-            
-            for(int i = 0; i < n.children.size(); i ++){
-                nChild = n.children.get(i);
-                
-                score = minimax(nChild,Math.max(a,aTemporaire),b);
-                aTemporaire = Math.max(aTemporaire,score);
-                values += " Child number: " + i + " returned score = " + score;
-                if(aTemporaire >= b){
-                    n.alpha = aTemporaire;
-                    //JeuUtils.detailsNode(n);
-                    return aTemporaire;
-                }
-                //System.out.println(values);
+            //For every possible option in board.
+            for (HashMap.Entry<String, Integer> entry : n.getMap().entrySet()) {
+                String key = entry.getKey();
+                Integer value = entry.getValue();
+            //for(int i = 0; i < n.children.size(); i ++){
+                //nChild = n.children.get(i);
+                if(value == 0 && n.heuristiqueCounter <= 2){
+                    nChild = n.creatAChild(key);
+                    //emidiatly check if tictacto and set if leaf or not.
+                    //determinTicTacToe(nChild);
+                    score = minimax(nChild,Math.max(a,aTemporaire),b);
+                    aTemporaire = Math.max(aTemporaire,score);
+                    if(aTemporaire >= b){
+                        n.alpha = aTemporaire;
+                        n.pointage = aTemporaire;
+                    
+                        return aTemporaire;
+                    }
+                }                
             }
+            n.pointage = aTemporaire;
             n.alpha = aTemporaire;
             return aTemporaire;
           
         }else if(typeJoueur.equals("Min")){
             
             bTemporaire = 100;
-
-            for(int i = 0; i < n.children.size(); i ++){
-                nChild = n.children.get(i);
-                score = minimax(nChild,a,Math.min(b,bTemporaire));
-                bTemporaire = Math.min(bTemporaire,score);
-                if(bTemporaire <= a){
-                    n.beta = bTemporaire;
-                    //JeuUtils.detailsNode(n);
-                    return bTemporaire;
-                }
+            for (HashMap.Entry<String, Integer> entry : n.getMap().entrySet()) {
+                String key = entry.getKey();
+                Integer value = entry.getValue();
+            //for(int i = 0; i < n.children.size(); i ++){
+               // nChild = n.children.get(i);
+               if(value == 0 && n.heuristiqueCounter <= 2){
+                    nChild = n.creatAChild(key);
+                    //determinTicTacToe(nChild);
+                    score = minimax(nChild,a,Math.min(b,bTemporaire));
+                    bTemporaire = Math.min(bTemporaire,score);
+                    if(bTemporaire <= a){
+                        n.beta = bTemporaire;
+                        n.pointage = bTemporaire;
+                    
+                        return bTemporaire;
+                    }
+               }
             }
+            n.pointage = bTemporaire;
             n.beta = bTemporaire;
             return bTemporaire;
         } 
@@ -192,7 +214,7 @@ public class MinmaxTree {
         //Verification Diagonal top right corner
         counter = 0;
         adversityCounter = 0;
-        int j=0;
+        int j = 0;
         for(int i = 0; i < 3; i++){
            
             if(board[i][j] == joueurActuel ){
@@ -244,28 +266,66 @@ public class MinmaxTree {
         return score;
     }
 
-    //Trouve le pointage min des enfant d'un noed MIN  
-    public int trouverPointageMin(Node n){
-        int beta = 100;
-        for(int i = 0; i < n.children.size(); i++){
-            if(n.children.get(i).pointage <= beta){
-                beta = n.children.get(i).pointage;
+    //Check for tictactoes only.
+    public void determinTicTacToe(Node n){
+        int[][] board = n.array2DBoard();
+        int horizontal = 0;
+        int vertical = 0;
+        int diagonal1 = 0;
+        int diagonal2 = 0;
+        
+        //Les verticales et horizontales.
+        for(int i = 0; i < 3; i++){
+            horizontal = 0;
+            vertical =0;
+            for (int j = 0; j < 3; j++){
+                
+                if(board[i][j] == n.symboleDuJoueurActuel){
+                    horizontal += 1;
+                    //System.out.println("board value = " +board[i][j] + " Horizontal value: " + horizontal);
+                }if(board[j][i] == n.symboleDuJoueurActuel){
+                    vertical += 1;
+                   // System.out.println("board value = " +board[j][i] + " Vertical value: " + vertical);
+                }
+                if(horizontal == 3 || vertical == 3){
+                   //if it is a min node make the score -5.
+                    n.isLeaf = true;
+                    n.pointage = 5;
+                    JeuUtils.detailsNode(n);
+                    System.out.println("Hori =" + horizontal + "  Verti =" + vertical);
+                    //Un tictactoe sur un max board est focement un defaite car le joueur qui a fait l'action était l'adversaire(provenant du node beta parent)
+                    if(n.typeNode.equals("Max")){
+                        n.pointage *= -1;
+                    }
+                    break;
+                }
+            }
+        } 
+        //Les diagonales  
+        int J = 0; 
+        int k = 2;
+        for(int I = 0; I < 3; I++){
+            if(board[I][J] == n.symboleDuJoueurActuel){
+                
+
+                diagonal1 += 1;
+            }if(board[I][k] == n.symboleDuJoueurActuel){
+                diagonal2 += 1;
+            }
+            k--;
+            J++;
+        }if(diagonal1 == 3 || diagonal2 == 3){
+            //if it is a min node make the score -5.
+            n.isLeaf = true;
+            n.pointage = 5;
+            if(n.typeNode.equals("Max")){
+                n.pointage *= -1;
             }
         }
-        return beta;
+
     }
 
-    //Trouve le pointage max des enfants d'un noed MAX 
-    public int trouverPointageMax(Node n){
-        int alpha = Integer.MIN_VALUE;
-        for(int i = 0; i < n.children.size(); i++){
-            if(n.children.get(i).pointage >= alpha){
-                alpha = n.children.get(i).pointage;
-            }
-        }
-        return alpha;
-    }
-
+    
     //recois la case et retourn l'identification de la position corespondant à la case.
     //Generer la meilleur decision grace à l'alpha beta
     public String genererMeilleurDecision(int[] cadre){
@@ -275,9 +335,7 @@ public class MinmaxTree {
          return "no value";
     }
 
-    // public void setEtatCases(HashMap <String, Integer> etatCases){
-    //     this._etatCases = etatCases;
-    // }
+    
 
 
     public void retirerCadre(int[] cadre) {

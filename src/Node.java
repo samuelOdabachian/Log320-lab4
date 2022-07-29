@@ -5,7 +5,7 @@ import java.util.HashMap;
 public class Node {
 
     //A faire le alpha et le beta.
-    private HashMap <String, Integer> etatCadre = new HashMap<>();;
+    HashMap <String, Integer> etatCadre = new HashMap<>();;
     int[][] board = null;
     ArrayList <Node> position;
     ArrayList <Node> children = new ArrayList<Node>();
@@ -13,7 +13,7 @@ public class Node {
     //The players current decision where to place his symbole "Key".
     String decision;
     //The risk factor of the potential decision. 
-    int pointage = 0;
+    int pointage ;
     //Le meilleur pointage du succeseur du noeud MAX (le noed pour lequel le tour a jouer et notre joueur) 
     int alpha;
     //Inverse pour le noed MIN.
@@ -23,7 +23,7 @@ public class Node {
     //Pour determiner quand arreter la creation de l'arbre.
     int heuristiqueCounter;
 
-    boolean isLeaf = true;
+    boolean isLeaf = false;
     
     public Node(){}
 
