@@ -61,8 +61,16 @@ public class MinmaxTree {
             if(value == 0 && node.heuristiqueCounter != 2){
                 //value = JeuUtils.obtenirIdSymboleAdverse(node.symboleDuJoueurActuel);
                 Node n = node.creatAChild(key);
+                determinTicTacToe(n);
+                System.out.println("Pointage for this node is : "+ Math.abs(n.pointage )+ "  Decision is : " + n.decision);
                 //Recursively creat children as long as the heuristic permits.
-                creatChildren(n);
+                if(Math.abs(n.pointage) != 5){
+                    creatChildren(n);
+                }else{
+                    System.out.println("Broke the loop for: "+ n.decision);
+                    break;
+                }
+                
             }
            
             
@@ -88,11 +96,13 @@ public class MinmaxTree {
             if(Math.abs(n.pointage) == 5){
                 //System.out.println("Le node a un core de 5 apparament :  "+ n.pointage);
                 return n.pointage;
-            }
-            score = scoreCalculator(n.array2DBoard(), n.symboleDuJoueurActuel);
-            n.pointage = score;
+            }else {
+                score = scoreCalculator(n.array2DBoard(), n.symboleDuJoueurActuel);
+                n.pointage = score;
             
-            return score;
+                return score;
+            }
+            
         }
         
         if(typeJoueur.equals("Max")){
@@ -106,8 +116,7 @@ public class MinmaxTree {
                 //nChild = n.children.get(i);
                 if(value == 0 && n.heuristiqueCounter <= 2){
                     nChild = n.creatAChild(key);
-                    //emidiatly check if tictacto and set if leaf or not.
-                    //determinTicTacToe(nChild);
+                    determinTicTacToe(nChild);
                     score = minimax(nChild,Math.max(a,aTemporaire),b);
                     aTemporaire = Math.max(aTemporaire,score);
                     if(aTemporaire >= b){
@@ -132,7 +141,7 @@ public class MinmaxTree {
                // nChild = n.children.get(i);
                if(value == 0 && n.heuristiqueCounter <= 2){
                     nChild = n.creatAChild(key);
-                    //determinTicTacToe(nChild);
+                    determinTicTacToe(nChild);
                     score = minimax(nChild,a,Math.min(b,bTemporaire));
                     bTemporaire = Math.min(bTemporaire,score);
                     if(bTemporaire <= a){
@@ -291,8 +300,8 @@ public class MinmaxTree {
                    //if it is a min node make the score -5.
                     n.isLeaf = true;
                     n.pointage = 5;
-                    JeuUtils.detailsNode(n);
-                    System.out.println("Hori =" + horizontal + "  Verti =" + vertical);
+                    //JeuUtils.detailsNode(n);
+                    //System.out.println("Hori =" + horizontal + "  Verti =" + vertical);
                     //Un tictactoe sur un max board est focement un defaite car le joueur qui a fait l'action était l'adversaire(provenant du node beta parent)
                     if(n.typeNode.equals("Max")){
                         n.pointage *= -1;

@@ -62,7 +62,7 @@ public class TEST {
 
         //mTree.minimax(root, -100, 100);
         //mTree.determinTicTacToe(root);
-        JeuUtils.detailsNode(root);
+        //JeuUtils.detailsNode(root);
         //System.out.println("RootChild1 score:"+ rootChild1.pointage);
 
        
