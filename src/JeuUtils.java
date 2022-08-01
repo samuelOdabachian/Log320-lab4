@@ -1,7 +1,19 @@
 import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class JeuUtils {
+
+        
+  public static final String ANSI_RESET = "\u001B[0m";
+  public static final String ANSI_BLACK = "\u001B[30m";
+  public static final String ANSI_RED = "\u001B[31m";
+  public static final String ANSI_GREEN = "\u001B[32m";
+  public static final String ANSI_YELLOW = "\u001B[33m";
+  public static final String ANSI_BLUE = "\u001B[34m";
+  public static final String ANSI_PURPLE = "\u001B[35m";
+  public static final String ANSI_CYAN = "\u001B[36m";
+  public static final String ANSI_WHITE = "\u001B[37m";
   
   static final String COLUMN_IDENTIFIERS = "ABCDEFGHI";
   // Les 3 cadres de bas sur le plateau de jeu
@@ -62,7 +74,106 @@ public class JeuUtils {
     return (joueurId == 2) ? 4 : 2;
   }
 
+  ////
+  public static int[][] DIRS = new int[][]{
+    {0, 1}, //ligne
+    {1, 0}, //colonne
+    {-1, 1}, //top down
+    {1, 1}, //down top
+  };
 
+  public static void caseIndexMapper(HashMap<String, int[]> listeIndexCadresEtCases, Cadre[][] matriceCadres) {
+    
+    for (int k = 3 - 1; k >= 0; k--) { // ligne cadre sur 3. 2 -> 1 -> 0
+      
+      for (int l = 0; l < 3; l++) { // colonne cadre sur 3. 0 -> 1 -> 2
+
+        Cadre cadre = new Cadre(new int[]{k, l});
+        matriceCadres[k][l] = cadre;
+        // System.out.println("cadre: "+k+ " : "+l);
+
+        for (int i = 3 - 1; i >= 0; i--) { // ligne case sur 3.
+          
+          for (int j = 0; j < 3; j++) { // colonne case sur 3.
+            // System.out.println("here");
+            int idNombre = (k * 3) + i + 1;
+            int idLettre = (l * 3) + j;
+            String codeCase = Character.toString( JeuUtils.COLUMN_IDENTIFIERS.charAt(idLettre) ) + idNombre;
+            int[] indexCase = {k, l, i, j};
+            listeIndexCadresEtCases.put(codeCase, indexCase);
+            matriceCadres[k][l].setCaseAtIndex(i, j, new Case(codeCase, new int[]{i, j}));
+          }
+        }
+      }
+    }
+    // System.out.println(Arrays.toString(m));
+  }
+
+  public static Cadre getCadreFromMapper(HashMap<String, int[]> listeIndexCadresEtCases, Cadre[][] matriceCadres, String idCase) {
+    int[] index = listeIndexCadresEtCases.get(idCase);
+    return matriceCadres[index[0]][index[1]];
+  }
+
+  public static Case getCaseFromMapper(HashMap<String, int[]> listeIndexCadresEtCases, Cadre[][] matriceCadres, String idCase) {
+    int[] index = listeIndexCadresEtCases.get(idCase);
+    return matriceCadres[index[0]][index[1]].getCases()[index[2]][index[3]];
+  }
+
+  public static boolean estCoupGagnant(Cadre cadre, int[] indexDansCadre, int symbole) {
+
+    // System.out.println("\n"+ANSI_GREEN+"Vérifier si coup gagnant");
+    int row = indexDansCadre[0];
+    int col = indexDansCadre[1];
+
+    int dimensionCadre = cadre.getCases().length;
+    int compteurCoups = 1;
+    
+    for (int d = 0; d < DIRS.length && compteurCoups < 3; d++) { // 4 directions
+
+      int[] dir = DIRS[d];
+
+      // System.out.println("Dir en cours:"+Arrays.toString(dir)+" || compteurCoups: "+compteurCoups+" - info = "+row+" :: "+col);
+      
+      if (d == 2 && (row + col != 2)) {
+        // System.out.println("- skip diago top down = "+row+" :: "+col);
+        continue;
+      }
+      if (d == 3 && (row != col)) {
+        // System.out.println("- skip diago bottom top = "+row+" :: "+col);
+        break;
+      }
+
+      // Does all four directions possible for 1 hit
+      for (int c = 1; c < dimensionCadre && compteurCoups < 3; c++) {
+        
+        int nextRow = dir[0] == 0 ? row : loopedJumpToNextIndex(dimensionCadre, row, c * dir[0]);
+        int nextCol = dir[1] == 0 ? col : loopedJumpToNextIndex(dimensionCadre, col, c * dir[1]);
+
+        Case cetteCase = cadre.getCases()[nextRow][nextCol];
+        // System.out.println("- Case en cours: "+cetteCase.getId());
+
+        if (cetteCase.getSymbole() == symbole) {
+          compteurCoups++;
+        } else {
+          compteurCoups = 1;
+          break;
+        }
+      }
+    }
+    // System.out.println("Coup gagnant: "+compteurCoups==3+ANSI_RESET);
+    return compteurCoups == 3;
+  }
+
+  public static int loopedJumpToNextIndex(int dimension, int currentIndex, int iteration) {
+    int nextIndex = currentIndex + iteration;
+    if (nextIndex >= dimension)
+      return nextIndex - dimension;
+    else if (nextIndex < 0)
+      return dimension + nextIndex;
+    else
+      return nextIndex;
+  }
+////
   public static HashMap<String, Integer> initTab(){
     HashMap<String, Integer> listeCases = new HashMap<String, Integer>();
 

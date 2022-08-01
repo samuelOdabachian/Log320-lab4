@@ -12,16 +12,17 @@ import java.util.concurrent.atomic.AtomicBoolean;
 //The children creator in a node will determine using heuristique and tictactoe detecter if the node is a leaf or not every time it is created.
 public class MinmaxTree {
 
-    private HashMap <String, Integer> _etatCases = new HashMap<String, Integer>();
+    // private HashMap <String, Integer> _etatCases = new HashMap<String, Integer>();
     int[] cadre;
     int symboleDuDernierJoeur;//X ou O.
     Node rootNode;
+
+    private Cadre _etatCadre;
     
 
-    public MinmaxTree(int symboleDuDernierJoeur, HashMap<String, Integer> etatGrilleJeu) {
+    public MinmaxTree(int symboleDuDernierJoeur, Cadre cadre) {
         this.symboleDuDernierJoeur = symboleDuDernierJoeur;
-        this._etatCases.putAll(etatGrilleJeu);
-        // this._etatCases = etatGrilleJeu;
+        this._etatCadre = cadre;
     }
 
     //Créer le tree à partire de l'état du cadre courante. 
@@ -29,25 +30,38 @@ public class MinmaxTree {
     //savoir l'état et construire l'arbre.
     //Il va construir l'état actuel avec des enfant designants les états future dependant des choix fait.
 
-    public void creatTree(int[] interval ){
-        String[] positions = obtenirListeCases(interval);
-        System.out.println("Positions possibles: " + Arrays.toString(positions));
+    public void createTree() {
+        Case[] positions = obtenirListeCoupsPossible();
+
         rootNode = new Node();
         rootNode.setSymbole(symboleDuDernierJoeur);//Doit changer pour le joueur adverse du dernier joueur
         rootNode.typeNode = "Max";
         rootNode.heuristiqueCounter = 0;
         
-
-        Integer value;
         //for loop pour interoger le hashmap pour avoir info sur le cadre en question.
         for(int i = 0; i < positions.length; i++ ){
-            value = this._etatCases.get(positions[i]);
-            rootNode.put(positions[i],value);
-            
+            Integer value = positions[i].getSymbole();
+            this.rootNode.put(positions[i].getId(), value);
         }
         //creatChildren(rootNode);
-        minimax(rootNode,-100, 100 );
-        
+        minimax(this.rootNode,-100, 100 );
+    }
+
+    private Case[] obtenirListeCoupsPossible() {
+        Case[][] grilleCases = this._etatCadre.getCases();
+        Case[] positions = new Case[9];
+        // int[] index = this._etatCadre.getIndex();
+
+        for (int i = 3-1; i >= 0; i--) { // toujours 3^2 = 9
+            for (int j = 0; j < 3; j++) {
+                
+                positions[(i*3)+j] = grilleCases[i][j];
+            }
+        }
+        System.out.println(JeuUtils.ANSI_BLUE+"Positions possibles: " + Arrays.toString(positions));
+        // System.out.println(JeuUtils.ANSI_BLUE+"Positions possibles: " + Arrays.toString(positions) + ", without loop: "+Arrays.toString(JeuUtils.CASES_GRILLE_JEU[index[0]][index[1]])+JeuUtils.ANSI_RESET);
+
+        return positions;
     }
 
     //Pour chaque case vide, créer un scenario possible avec le choix fait. Configurer le alpha et beta aussi
@@ -162,7 +176,7 @@ public class MinmaxTree {
       }
 
     //scoreCalculator version 2!
-    public int scoreCalculator(int[][] board, int joueurActuel){
+    public int scoreCalculator(int[][] board, int joueurActuel) {
         
         int joueurAdverse = JeuUtils.obtenirIdSymboleAdverse(joueurActuel);
 
@@ -173,7 +187,6 @@ public class MinmaxTree {
             score = -1* sccoreSelonAdversaire;
         }
         return score;
-
     }
 
     //verifie lineairement les ligne horizontal, vertical et diagonal pour trouver un tictactoe ou un twin, ainsi que des gaspillage de tours.
@@ -334,35 +347,32 @@ public class MinmaxTree {
 
     }
 
-    
-    //recois la case et retourn l'identification de la position corespondant à la case.
-    //Generer la meilleur decision grace à l'alpha beta
-    public String genererMeilleurDecision(int[] cadre){
+    public String genererMeilleurDecision(Cadre cadre){
         //Random number in the interval of the root node children arraylist.
-        //int rand = (int)(Math.random() * 10);
-         //int index = rand % rootNode.children.size(); // rand % 9
-         return "no value";
+        int rand1 = (int)(Math.random() * 10) % 3;
+        int rand2 = (int)(Math.random() * 10) % 3;
+        Case caseChoisie = cadre.getCases()[rand1][rand2];
+
+        int highestScore = this.rootNode.alpha;
+
+        System.out.println(JeuUtils.ANSI_PURPLE+"highest score=" + highestScore + JeuUtils.ANSI_RESET);
+        return caseChoisie.getId();
     }
 
-    
+    // TODO: transformer grille de cadres en grille de cases pour n'avoir
+    // qu'une seule fonction genererMeilleurDecision
+    public String genererMeilleurDecision(Cadre[][] cadres){
+        //Random number in the interval of the root node children arraylist.
+        int rand1 = (int)(Math.random() * 10) % 3;
+        int rand2 = (int)(Math.random() * 10) % 3;
+        
+        Cadre cadreChoisi = cadres[rand1][rand2];
 
-
-    public void retirerCadre(int[] cadre) {
-        String[] casesCadre = JeuUtils.CASES_GRILLE_JEU[cadre[0]-1][cadre[1]-1];
-        for (String uneCase : casesCadre) {
-            this._etatCases.remove(uneCase);
+        if (cadreChoisi.getGagnant() != 0) {
+            return genererMeilleurDecision(cadres);
         }
+        return genererMeilleurDecision(cadreChoisi);
     }
-
-    public String[] obtenirListeCases(int[] cadre) {
-
-        if (cadre[0] == -1 && cadre[1] == -1) {
-           return this._etatCases.keySet().toArray( new String[this._etatCases.size()] );
-        }
-        return JeuUtils.CASES_GRILLE_JEU[cadre[0]-1][cadre[1]-1];
-    }
-
-
     
 }
 

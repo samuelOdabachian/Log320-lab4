@@ -2,16 +2,32 @@ import java.util.HashMap;
 
 public class TEST {
     public static void main(String[] args) {
-        int[] cadre = {2,2};
-        HashMap<String, Integer> map = JeuUtils.initTab();
-        map.replace("F6", 2);
-        map.replace("F5", 2);
-        MinmaxTree mTree = new MinmaxTree(2, map);
-        mTree.creatTree(cadre);
-        Node root = mTree.rootNode; 
-        root.decision = "D6";
-        Node testNode = new Node();
+        // int[] cadre = {2,2};
+        // HashMap<String, Integer> map = JeuUtils.initTab();
+
+        // map.replace("F6", 2);
+        // map.replace("F5", 2);
         
+        // MinmaxTree mTree = new MinmaxTree(2, map);
+        // mTree.creatTree(cadre);
+        // Node root = mTree.rootNode; 
+        // root.decision = "D6";
+        // Node testNode = new Node();
+        
+        HashMap<String, int[]> positionsDictionnary = new HashMap<String, int[]>();
+        Cadre[][] grilleCadres = new Cadre[3][3];
+
+        JeuUtils.caseIndexMapper(positionsDictionnary, grilleCadres); //init dictionnaire et grille
+
+        Cadre cadreMilieu = grilleCadres[1][1]; //Cadre du milieu
+        cadreMilieu.setSymboleCaseAtIndex(2, 2, 2); //F6
+        cadreMilieu.setSymboleCaseAtIndex(1, 2, 2); //F5
+        cadreMilieu.printBoard();
+
+        MinmaxTree mTree = new MinmaxTree(2, cadreMilieu);
+        mTree.createTree();
+        Node root = mTree.rootNode;
+        System.out.println(JeuUtils.ANSI_GREEN+root.decision+JeuUtils.ANSI_RESET);
     
        // Node rootChild1 = root.children.get(0);
 
