@@ -20,13 +20,14 @@ public class TEST {
         JeuUtils.caseIndexMapper(positionsDictionnary, grilleCadres); //init dictionnaire et grille
 
         Cadre cadreMilieu = grilleCadres[1][1]; //Cadre du milieu
-        cadreMilieu.setSymboleCaseAtIndex(2, 2, 2); //F6
+        cadreMilieu.setSymboleCaseAtIndex(2, 2, 4); //F6
         cadreMilieu.setSymboleCaseAtIndex(1, 2, 2); //F5
         cadreMilieu.printBoard();
 
         MinmaxTree mTree = new MinmaxTree(2, cadreMilieu);
         mTree.createTree();
         Node root = mTree.rootNode;
+        root.decision = "F6";
         System.out.println(JeuUtils.ANSI_GREEN+root.decision+JeuUtils.ANSI_RESET);
     
        // Node rootChild1 = root.children.get(0);
@@ -76,9 +77,9 @@ public class TEST {
         System.out.println("Board: "+ printBoard);
         */
 
-        //mTree.minimax(root, -100, 100);
+        //mTree. minimaxAlphaBeta(root, -100, 100);
         //mTree.determinTicTacToe(root);
-        //JeuUtils.detailsNode(root);
+        JeuUtils.detailsNode(root);
         //System.out.println("RootChild1 score:"+ rootChild1.pointage);
 
        

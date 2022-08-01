@@ -34,7 +34,7 @@ public class MinmaxTree {
         Case[] positions = obtenirListeCoupsPossible();
 
         rootNode = new Node();
-        rootNode.setSymbole(symboleDuDernierJoeur);//Doit changer pour le joueur adverse du dernier joueur
+        rootNode.setSymbole(symboleDuDernierJoeur);
         rootNode.typeNode = "Max";
         rootNode.heuristiqueCounter = 0;
         
@@ -44,7 +44,7 @@ public class MinmaxTree {
             this.rootNode.put(positions[i].getId(), value);
         }
         //creatChildren(rootNode);
-        minimax(this.rootNode,-100, 100 );
+        minimaxAlphaBeta(this.rootNode,-100, 100 );
     }
 
     private Case[] obtenirListeCoupsPossible() {
@@ -72,7 +72,7 @@ public class MinmaxTree {
             Integer value = entry.getValue();
             
             //Si heuristique est atteind, donc areter la creation de l'arbre.
-            if(value == 0 && node.heuristiqueCounter != 2){
+            if(value == 0 && node.heuristiqueCounter != 1){
                 //value = JeuUtils.obtenirIdSymboleAdverse(node.symboleDuJoueurActuel);
                 Node n = node.creatAChild(key);
                 determinTicTacToe(n);
@@ -86,17 +86,11 @@ public class MinmaxTree {
                 }
                 
             }
-           
-            
-           
             
         }
     }
     
-    public int minimax(Node n, int a, int b){
-        /* TO DO: For each children of parent node, recursive call until you find a leaf, give the leaf a score and return the score,
-         * For each child leaf a score is returned, depending if the parent is a Min or Max player keep the appropriate score fromm all their children...
-         */
+    private int minimaxAlphaBeta(Node n, int a, int b){
         Node nChild;
         String typeJoueur = n.typeNode;
         int score = 0; 
@@ -104,14 +98,13 @@ public class MinmaxTree {
         int aTemporaire = 0;
     
         //If the node has no score already then do scorecalculator.
-        // Maybe have the heuristique count turns and at a certain point, if it is possible to have leafs than start to check that level for tictactoes
         if(n.isLeaf == true || n.heuristiqueCounter == 2){
             //check the node`s board and wright in it a score and return the score
             if(Math.abs(n.pointage) == 5){
-                //System.out.println("Le node a un core de 5 apparament :  "+ n.pointage);
+                
                 return n.pointage;
             }else {
-                score = scoreCalculator(n.array2DBoard(), n.symboleDuJoueurActuel);
+                score = scoreCalculator(n.array2DBoard(), n.symboleDuJoueurActuel, n.typeNode);
                 n.pointage = score;
             
                 return score;
@@ -131,7 +124,7 @@ public class MinmaxTree {
                 if(value == 0 && n.heuristiqueCounter <= 2){
                     nChild = n.creatAChild(key);
                     determinTicTacToe(nChild);
-                    score = minimax(nChild,Math.max(a,aTemporaire),b);
+                    score =  minimaxAlphaBeta(nChild,Math.max(a,aTemporaire),b);
                     aTemporaire = Math.max(aTemporaire,score);
                     if(aTemporaire >= b){
                         n.alpha = aTemporaire;
@@ -156,7 +149,7 @@ public class MinmaxTree {
                if(value == 0 && n.heuristiqueCounter <= 2){
                     nChild = n.creatAChild(key);
                     determinTicTacToe(nChild);
-                    score = minimax(nChild,a,Math.min(b,bTemporaire));
+                    score =  minimaxAlphaBeta(nChild,a,Math.min(b,bTemporaire));
                     bTemporaire = Math.min(bTemporaire,score);
                     if(bTemporaire <= a){
                         n.beta = bTemporaire;
@@ -176,15 +169,17 @@ public class MinmaxTree {
       }
 
     //scoreCalculator version 2!
-    public int scoreCalculator(int[][] board, int joueurActuel) {
+    private int scoreCalculator(int[][] board, int joueurActuel, String type) {
         
         int joueurAdverse = JeuUtils.obtenirIdSymboleAdverse(joueurActuel);
 
         int score = lineairCalculator(board,joueurActuel,joueurAdverse);
         int sccoreSelonAdversaire = lineairCalculator(board, joueurAdverse, joueurActuel);
         
-        if(score <= sccoreSelonAdversaire){
+        if(score <= sccoreSelonAdversaire && type.equals("Min")){
             score = -1* sccoreSelonAdversaire;
+        }else if(score <= sccoreSelonAdversaire && type.equals("Max")){
+            score = sccoreSelonAdversaire;
         }
         return score;
     }
@@ -194,6 +189,7 @@ public class MinmaxTree {
         int counter;
         int adversityCounter;
         int score = 0;
+        int tempScore = 0;
         
         
         //Verification horizontal
@@ -206,12 +202,11 @@ public class MinmaxTree {
                 }else if(board[i][j] == joueurAdverse){
                     adversityCounter++;
                 }
-
-                score = compareScore(counter, adversityCounter, score);
-                //Return socre of 5 witch is tictactoe.
-                if (score == 5){
-                    return score;
+                tempScore =  compareScore(counter, adversityCounter, score);
+                if (tempScore != 0){
+                    score = tempScore;
                 }
+                
             }
         }
 
@@ -226,10 +221,11 @@ public class MinmaxTree {
                 }else if(board[j][i] == joueurAdverse){
                     adversityCounter++;
                 }
-                score = compareScore(counter, adversityCounter,score);
-                if (score == 5){
-                    return score;
+                tempScore =  compareScore(counter, adversityCounter, score);
+                if (tempScore != 0){
+                    score = tempScore;
                 }
+
             }
         }
 
@@ -246,11 +242,10 @@ public class MinmaxTree {
             }
             j++;
         }
-        score = compareScore(counter, adversityCounter, score);
-        if (score == 5){
-            return score;
+        tempScore =  compareScore(counter, adversityCounter, score);
+        if (tempScore != 0){
+            score = tempScore;
         }
-
 
         //Verification Diagonal top left corner
         counter = 0;
@@ -264,24 +259,20 @@ public class MinmaxTree {
             }
             j--;
         }
-            score = compareScore(counter, adversityCounter, score);
-            if (score == 5){
-                return score;
-            }
+        tempScore =  compareScore(counter, adversityCounter, score);
+        if (tempScore != 0){
+            score = tempScore;
+        }
         return score;
     }
 
 
-    //Recois les counter et done une score approprié.
+    //Recois les counteurs et done une score approprié.
     private int compareScore(int counter, int adversityCounter, int score){
         
-        if(counter == 3){
-            //Tictacto is the best score so emidiate return
-            return 5;
-        }else if(score == 0 && counter == 2 && adversityCounter == 0){
-            //Else it is a twin
-            score =2;
-        }else if(score == 0 && counter == 2 && adversityCounter == 1){
+        if(score == 0 && counter == 2 && adversityCounter == 0){
+            score = 1;
+        }else if(counter == 2 && adversityCounter == 1){
             //On ne veut pas ajouter a une ligne qui contient déjà un adversaire et au moin un de notre. (gaspillage de tour)
             score = -1;
         }

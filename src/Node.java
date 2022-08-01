@@ -34,12 +34,12 @@ public class Node {
     public Node(HashMap <String, Integer> etatCadre, int symboleDuDernierJoeur){
         this.etatCadre.putAll(etatCadre);
        
-        this.symboleDuJoueurActuel = JeuUtils.obtenirIdSymboleAdverse(symboleDuDernierJoeur);
+        this.symboleDuJoueurActuel = symboleDuDernierJoeur;
     }
 
     //Recopier le etat du cadre mais faire une seul changement dans d'une position pour dessiner un scenario potentiel. 
     public Node creatAChild(String key){
-       
+        
         Node n = new Node(etatCadre,JeuUtils.obtenirIdSymboleAdverse(this.symboleDuJoueurActuel));
         n.replace(key, n.symboleDuJoueurActuel);
         n.decision = key;
