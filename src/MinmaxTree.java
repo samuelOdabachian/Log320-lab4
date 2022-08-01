@@ -2,14 +2,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-//Tree a interoger pour savoir les pourcentages de ganger pour chaque coups possible. Il faut recréer le tree
-//après chaque coup. Donc le tree n'est pas statique.
-//Il faut reécrire dans le tree les positions et options possible dans le case 3x3 envisager. 
-//Le tree envoie le meilleur choix possible après des calcules internes.
+/**
+ * Cette arbre est responsable de creer les noeds recursivement en utilisant le concept de minimax et elegage alpha beta.
+ * 
+ * Il gère chaque noeds et il donne un score sur chaque noed dépendant des possibilité de gagner pour le joueur.
+ */
 
-//Idées: le beta decide s'il faut arreter de construire l'arbre. le scoreCalculator ne calcule plus les tictactoes car on le fait a chaque fois
-//pour determiner s'il est un leaf. Sinon, un node est automatiquement un leaf si la creation d'enfant arrete.
-//The children creator in a node will determine using heuristique and tictactoe detecter if the node is a leaf or not every time it is created.
 public class MinmaxTree {
 
     // private HashMap <String, Integer> _etatCases = new HashMap<String, Integer>();
@@ -25,11 +23,10 @@ public class MinmaxTree {
         this._etatCadre = cadre;
     }
 
-    //Créer le tree à partire de l'état du cadre courante. 
-    //Dépendant de la liste de position à checker donné, la methode va interoger le hashMap pour
-    //savoir l'état et construire l'arbre.
-    //Il va construir l'état actuel avec des enfant designants les états future dependant des choix fait.
-
+    /**
+     * Pour chaque positions disponible, générer un noed avec une decision d'action pour remplir un position disponible. 
+     * Ensuite évaluer le scénario possible en lui donnant un score.
+     */
     public void createTree() {
         Case[] positions = obtenirListeCoupsPossible();
 
@@ -90,6 +87,15 @@ public class MinmaxTree {
         }
     }
     
+    /**
+     * Concepte vue dans le cours LOG 320. Il s'agis de creer l'arbre recursivement en l'évaluant et utilisant l'élégage alpha et beta 
+     * pour couper des branche qui ne von pas être utilisé.
+     * 
+     * @param n le noed quiva être évaluer et des enfants vont s'ajouter s'il y a lieu
+     * @param a la valeur alpha du noeud parent
+     * @param b la valeur beta du noeud parent
+     * @return le pointage que le noeud a reçu 
+     */
     private int minimaxAlphaBeta(Node n, int a, int b){
         Node nChild;
         String typeJoueur = n.typeNode;
@@ -119,8 +125,6 @@ public class MinmaxTree {
             for (HashMap.Entry<String, Integer> entry : n.getMap().entrySet()) {
                 String key = entry.getKey();
                 Integer value = entry.getValue();
-            //for(int i = 0; i < n.children.size(); i ++){
-                //nChild = n.children.get(i);
                 if(value == 0 && n.heuristiqueCounter <= 2){
                     nChild = n.creatAChild(key);
                     determinTicTacToe(nChild);
@@ -137,15 +141,14 @@ public class MinmaxTree {
             n.pointage = aTemporaire;
             n.alpha = aTemporaire;
             return aTemporaire;
-          
+
+        //Même concept que le cas du "Max".
         }else if(typeJoueur.equals("Min")){
             
             bTemporaire = 100;
             for (HashMap.Entry<String, Integer> entry : n.getMap().entrySet()) {
                 String key = entry.getKey();
                 Integer value = entry.getValue();
-            //for(int i = 0; i < n.children.size(); i ++){
-               // nChild = n.children.get(i);
                if(value == 0 && n.heuristiqueCounter <= 2){
                     nChild = n.creatAChild(key);
                     determinTicTacToe(nChild);
@@ -168,7 +171,14 @@ public class MinmaxTree {
         
       }
 
-    //scoreCalculator version 2!
+    /**
+     * Calcule le pointage d'un cadre selon sont état.
+     * 
+     * @param board le cadre a évaluer
+     * @param joueurActuel le joueur qui vient de jouer
+     * @param type le type de joueur "Min" ou "Max"
+     * @return le pointage calculé
+     */
     private int scoreCalculator(int[][] board, int joueurActuel, String type) {
         
         int joueurAdverse = JeuUtils.obtenirIdSymboleAdverse(joueurActuel);
@@ -184,7 +194,14 @@ public class MinmaxTree {
         return score;
     }
 
-    //verifie lineairement les ligne horizontal, vertical et diagonal pour trouver un tictactoe ou un twin, ainsi que des gaspillage de tours.
+    /**
+     * Compte le nombre de case occupé ligne par ligne dans un cadre.
+     * 
+     * @param board le cadre a évaluer
+     * @param joueurActuel le joueur qui vient de jouer
+     * @param type le type de joueur "Min" ou "Max"
+     * @return le pointage calculé
+     */
     private int lineairCalculator(int[][] board, int joueurActuel, int joueurAdverse ){
         int counter;
         int adversityCounter;
@@ -266,8 +283,14 @@ public class MinmaxTree {
         return score;
     }
 
-
-    //Recois les counteurs et done une score approprié.
+    /**
+     * Selon la valeur reçu du nombre de joueur dans une ligne, un score est associé.
+     * 
+     * @param counter nombre de symbole dans une ligne
+     * @param adversityCounter nombre de symbole adverse dans une ligne
+     * @param score le score calculé courant s'il y a lieu.
+     * @return un score 
+     */
     private int compareScore(int counter, int adversityCounter, int score){
         
         if(score == 0 && counter == 2 && adversityCounter == 0){
@@ -279,7 +302,11 @@ public class MinmaxTree {
         return score;
     }
 
-    //Check for tictactoes only.
+    /**
+     * Vérifie les ligne seulement pour trouver un tictactoe. Modifiec l'attribut  "pointage" dans le noeud.
+     * 
+     * @param n le noeud a vérifier pour un tictactoe
+     */
     public void determinTicTacToe(Node n){
         int[][] board = n.array2DBoard();
         int horizontal = 0;
@@ -301,7 +328,6 @@ public class MinmaxTree {
                    // System.out.println("board value = " +board[j][i] + " Vertical value: " + vertical);
                 }
                 if(horizontal == 3 || vertical == 3){
-                   //if it is a min node make the score -5.
                     n.isLeaf = true;
                     n.pointage = 5;
                     //JeuUtils.detailsNode(n);
@@ -338,6 +364,12 @@ public class MinmaxTree {
 
     }
 
+    /**
+     * 
+     * 
+     * @param cadre
+     * @return
+     */
     public String genererMeilleurDecision(Cadre cadre){
         //Random number in the interval of the root node children arraylist.
         int rand1 = (int)(Math.random() * 10) % 3;
