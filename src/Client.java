@@ -6,72 +6,72 @@ import java.util.HashMap;
 class Client {
 
   private static boolean IS_AI_ACTIVE = true;
-  private static final boolean ACTIVATE_SERVER_MODE = false;
+  private static final boolean ACTIVATE_SERVER_MODE = true;
 
   private static final int CASE_VIDE = 0;
   private static final int SYMBOLE_O = 2;
   private static final int SYMBOLE_X = 4;
-  
 
   private static int SYMBOLE_JOUEUR = -1;
 
   private static void testCaseMapper() {
     HashMap<String, int[]> listeIndexCadresEtCases = new HashMap<String, int[]>();
-      Cadre[][] m = new Cadre[3][3];
+    Cadre[][] m = new Cadre[3][3];
 
-      JeuUtils.caseIndexMapper(listeIndexCadresEtCases, m);
-      // HashMap<String, int[]> test = JeuUtils.caseIndexMapper();
-      System.out.println(m.length + " :: " + m[0].length);
-      // for (int i = 0; i < 3; i++) {
-      //   for (int j = 0; j < 3; j++) {
-      //     // System.out.println( Arrays.toString(m[i][j].getIndex()) );
-      //     // System.out.println(m[i][j].getCases().length );
-      //   }
-      // }
-      // int counter   = 0;
-      //   for (Cadre[] cadres : m) {
-      //     for (Cadre cadre : cadres) {
-      //       for (Case[] cases : cadre.getCases()) {
-      //         for (Case uneCase : cases) {
-      //           counter++;
-      //           System.out.println(counter+" :: "+uneCase.getId());
-      //         }
-      //       }
-      //     }
-      //   }
-      
-        System.out.println("FIND Cadre with C1");
-        // System.out.println( Arrays.toString(JeuUtils.getCadreFromMapper(listeIndexCadresEtCases, m, "D5").getIndex())  );
-        // System.out.println( Arrays.toString(JeuUtils.getCaseFromMapper(listeIndexCadresEtCases, m, "D5").getIndexDansCadre())  );
-        Cadre cadre = JeuUtils.getCadreFromMapper(listeIndexCadresEtCases, m, "C1");
-      Case case1 = JeuUtils.getCaseFromMapper(listeIndexCadresEtCases, m, "C1");
-      case1.setSymbole(2);
-      Case case2 = JeuUtils.getCaseFromMapper(listeIndexCadresEtCases, m, "A1");
-      case2.setSymbole(2);
-      Case case3 = JeuUtils.getCaseFromMapper(listeIndexCadresEtCases, m, "B3");
-      case3.setSymbole(2);
+    JeuUtils.caseIndexMapper(listeIndexCadresEtCases, m);
+    // HashMap<String, int[]> test = JeuUtils.caseIndexMapper();
+    System.out.println(m.length + " :: " + m[0].length);
+    // for (int i = 0; i < 3; i++) {
+    // for (int j = 0; j < 3; j++) {
+    // // System.out.println( Arrays.toString(m[i][j].getIndex()) );
+    // // System.out.println(m[i][j].getCases().length );
+    // }
+    // }
+    // int counter = 0;
+    // for (Cadre[] cadres : m) {
+    // for (Cadre cadre : cadres) {
+    // for (Case[] cases : cadre.getCases()) {
+    // for (Case uneCase : cases) {
+    // counter++;
+    // System.out.println(counter+" :: "+uneCase.getId());
+    // }
+    // }
+    // }
+    // }
 
-      for (Case[] listeCases : cadre.getCases()) {
-        for (Case cetteCase : listeCases) {
-          System.out.println("Case "+cetteCase.getId());
-        }
+    System.out.println("FIND Cadre with C1");
+    // System.out.println(
+    // Arrays.toString(JeuUtils.getCadreFromMapper(listeIndexCadresEtCases, m,
+    // "D5").getIndex()) );
+    // System.out.println(
+    // Arrays.toString(JeuUtils.getCaseFromMapper(listeIndexCadresEtCases, m,
+    // "D5").getIndexDansCadre()) );
+    Cadre cadre = JeuUtils.getCadreFromMapper(listeIndexCadresEtCases, m, "C1");
+    Case case1 = JeuUtils.getCaseFromMapper(listeIndexCadresEtCases, m, "C1");
+    case1.setSymbole(2);
+    Case case2 = JeuUtils.getCaseFromMapper(listeIndexCadresEtCases, m, "A1");
+    case2.setSymbole(2);
+    Case case3 = JeuUtils.getCaseFromMapper(listeIndexCadresEtCases, m, "B3");
+    case3.setSymbole(2);
+
+    for (Case[] listeCases : cadre.getCases()) {
+      for (Case cetteCase : listeCases) {
+        System.out.println("Case " + cetteCase.getId());
       }
-      
-      Boolean estCoupGagnant = JeuUtils.estCoupGagnant(cadre, case1.getIndexDansCadre(), 2);
-        
+    }
 
-      System.out.println( estCoupGagnant );
+    Boolean estCoupGagnant = JeuUtils.estCoupGagnant(cadre, case1.getIndexDansCadre(), 2);
+
+    System.out.println(estCoupGagnant);
   }
 
   public static void main(String[] args) {
-    
+
     if (ACTIVATE_SERVER_MODE) {
       startGameOnServer(args);
-    }
-    else {
+    } else {
       System.out.println("TEST MODE");
 
-      
       TicTacToeAI notreAI = new TicTacToeAI();
       SYMBOLE_JOUEUR = SYMBOLE_X;
       // notreAI.jouer(SYMBOLE_JOUEUR, "C7");
@@ -82,10 +82,10 @@ class Client {
       // notreAI.jouer(SYMBOLE_JOUEUR, "A9");
       // notreAI.rejouer();
       // notreAI.rejouer();
-      //  System.out.println("\n");
+      // System.out.println("\n");
 
       // MinmaxTree minmaxTree = new MinmaxTree();
-      //try to printout the tree during the creation instead of making a new methode.
+      // try to printout the tree during the creation instead of making a new methode.
       // minmaxTree.creatTree(testCase, notreAI.getGrille());
     }
   }
@@ -93,7 +93,7 @@ class Client {
   public static void startGameOnServer(String[] args) {
     System.out.println("SERVER MODE");
     TicTacToeAI notreAI = new TicTacToeAI();
-    
+
     Socket MyClient;
     BufferedInputStream input;
     BufferedOutputStream output;
@@ -186,8 +186,15 @@ class Client {
         // Le dernier coup est invalide
         if (cmd == '4') {
           System.out.println("Coup invalide, entrez un nouveau coup : ");
+          // !!!
+          try {
+            Thread.sleep(5000);
+          } catch (InterruptedException e) {
+            e.printStackTrace();
+          }
+
           String move = null;
-          move = (IS_AI_ACTIVE) ? notreAI.rejouer() : console.readLine(); //AJOUT
+          move = (IS_AI_ACTIVE) ? notreAI.rejouer() : console.readLine(); // AJOUT
           output.write(move.getBytes(), 0, move.length());
           output.flush();
 
