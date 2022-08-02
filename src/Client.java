@@ -187,11 +187,6 @@ class Client {
         if (cmd == '4') {
           System.out.println("Coup invalide, entrez un nouveau coup : ");
           // !!!
-          try {
-            Thread.sleep(5000);
-          } catch (InterruptedException e) {
-            e.printStackTrace();
-          }
 
           String move = null;
           move = (IS_AI_ACTIVE) ? notreAI.rejouer() : console.readLine(); // AJOUT

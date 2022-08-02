@@ -41,7 +41,9 @@ public class MinmaxTree {
         // for loop pour interoger le hashmap pour avoir info sur le cadre en question.
         for (int i = 0; i < positions.length; i++) {
             Integer value = positions[i].getSymbole();
-            this.rootNode.put(positions[i].getId(), value);
+            System.out.println(positions[i] + ": " + positions[i].getSymbole());
+            if (positions[i].getSymbole() == 0)
+                this.rootNode.put(positions[i].getId(), value);
         }
         // creatChildren(rootNode);
         minimaxAlphaBeta(this.rootNode, -100, 100);
@@ -54,7 +56,7 @@ public class MinmaxTree {
 
         for (int i = 3 - 1; i >= 0; i--) { // toujours 3^2 = 9
             for (int j = 0; j < 3; j++) {
-
+                // if (_etatCadre.getCases()[i][j].getSymbole() == 0)
                 positions[(i * 3) + j] = grilleCases[i][j];
             }
         }

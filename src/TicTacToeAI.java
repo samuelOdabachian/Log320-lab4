@@ -58,7 +58,9 @@ public class TicTacToeAI {
     // meilleureDecision);
     // System.out.println("\n");
 
-    return "A1";
+    // return random choice
+    String randomChoice = (char) (Math.random() * 9 + 'A') + "" + (char) (Math.random() * 9 + '1');
+    return randomChoice;
   }
 
   /**
@@ -78,6 +80,7 @@ public class TicTacToeAI {
     // obtenirProchainCoupValide(this._prochainCadreValide);
 
     System.out.println("AI a decide de placer un coup a la case " + meilleureDecision);
+    mettreAJourGrilleEtatJeu(meilleureDecision, this._joueurId);
     return meilleureDecision;
   }
 
