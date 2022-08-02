@@ -421,7 +421,7 @@ public class MinmaxTree {
 
         Cadre cadreChoisi = cadres[rand1][rand2];
 
-        if (cadreChoisi.getGagnant() != 0) {
+        if (cadreChoisi.getSymbole() != 0) {
             return genererMeilleurDecision(cadres);
         }
         return genererMeilleurDecision(cadreChoisi);

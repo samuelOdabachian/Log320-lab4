@@ -167,7 +167,7 @@ public class TicTacToeAI {
     // minmaxTree.creatTree(cadre);
     String meilleureDecision;
 
-    if (cadre.getGagnant() == 0) { // pour un cadre
+    if (cadre.getSymbole() == 0) { // pour un cadre
       meilleureDecision = minmaxTree.genererMeilleurDecision(cadre);
     } else { // pour les neuf cadres quand on a toute la grille
       meilleureDecision = minmaxTree.genererMeilleurDecision(this._grilleCadres);
@@ -183,10 +183,10 @@ public class TicTacToeAI {
   private void mettreAJourGrilleEtatJeu(String idCase, int symboleId) {
     Case caseJoue = JeuUtils.getCaseFromMapper(this._positionDictionnary, this._grilleCadres, idCase);
     Cadre cadre = JeuUtils.getCadreFromMapper(this._positionDictionnary, this._grilleCadres, idCase);
-    boolean estCoupGagnant = JeuUtils.estCoupGagnant(cadre, caseJoue.getIndexDansCadre(), symboleId);
+    boolean estCoupGagnant = JeuUtils.estCoupGagnant(cadre, caseJoue.getIndex(), symboleId);
     caseJoue.setSymbole(symboleId);
     if (estCoupGagnant)
-      cadre.setGagnant(symboleId);
+      cadre.setSymbole(symboleId);
     cadre.printBoard();
   }
 

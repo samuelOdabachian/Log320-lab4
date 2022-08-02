@@ -60,7 +60,7 @@ class Client {
       }
     }
 
-    Boolean estCoupGagnant = JeuUtils.estCoupGagnant(cadre, case1.getIndexDansCadre(), 2);
+    Boolean estCoupGagnant = JeuUtils.estCoupGagnant(cadre, case1.getIndex(), 2);
 
     System.out.println(estCoupGagnant);
   }

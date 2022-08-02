@@ -1,27 +1,28 @@
 import java.util.Arrays;
 
-public class Cadre {
+public class Cadre extends AbstractComposantGrilleJeu {
 
     private int[] index;
 
-    private int gagnant = 0;
+    // private int gagnant = 0;
     private Case[][] cases = new Case[3][3];
 
     public Cadre(int[] index) {
+        super(index);
         this.index = index;
     }
 
-    public Cadre(Case[][] cases) {
-        this.cases = cases;
-    }
+    // public Cadre(Case[][] cases) {
+    //     this.cases = cases;
+    // }
 
-    public int getGagnant() {
-        return gagnant;
-    }
+    // public int getGagnant() {
+    //     return gagnant;
+    // }
 
-    public void setGagnant(int gagnant) {
-        this.gagnant = gagnant;
-    }
+    // public void setGagnant(int gagnant) {
+    //     this.gagnant = gagnant;
+    // }
 
     public void setCases(Case[][] cases) {
         this.cases = cases;
@@ -53,7 +54,7 @@ public class Cadre {
             printBoard += "\n";
         }
         String color;
-        switch (this.gagnant) {
+        switch (this.getSymbole()) {
             case 2:
                 color = JeuUtils.ANSI_RED;
                 break;
