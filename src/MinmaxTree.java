@@ -113,7 +113,7 @@ public class MinmaxTree {
         int score = 0;
         int bTemporaire = 0;
         int aTemporaire = 0;
-
+        System.out.println("minimax"+ n.alpha);
         // If the node has no score already then do scorecalculator.
         if (n.isLeaf == true || n.heuristiqueCounter == 2) {
             // check the node`s board and wright in it a score and return the score
@@ -416,6 +416,7 @@ public class MinmaxTree {
     // qu'une seule fonction genererMeilleurDecision
     public String genererMeilleurDecision(Cadre[][] cadres) {
         // Random number in the interval of the root node children arraylist.
+        System.out.println(JeuUtils.ANSI_RED+"Cadre déjà prise! on choisit une autre"+JeuUtils.ANSI_RESET);
         int rand1 = (int) (Math.random() * 10) % 3;
         int rand2 = (int) (Math.random() * 10) % 3;
 

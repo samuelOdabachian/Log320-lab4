@@ -14,21 +14,32 @@ public class TEST {
         // root.decision = "D6";
         // Node testNode = new Node();
         
-        HashMap<String, int[]> positionsDictionnary = new HashMap<String, int[]>();
-        Cadre[][] grilleCadres = new Cadre[3][3];
+        // HashMap<String, int[]> positionsDictionnary = new HashMap<String, int[]>();
+        // Cadre[][] grilleCadres = new Cadre[3][3];
+        
+        // JeuUtils.caseIndexMapper(positionsDictionnary, grilleCadres); //init dictionnaire et grille
+        
+        TicTacToeAI notreAi = new TicTacToeAI();
+        notreAi.jouer(4, "E6");
+        notreAi.jouer(4, "H5");
+        notreAi.jouer(4, "H8");
+        notreAi.jouer(4, "B2");
+        // notreAi.jouer(4, "A8");
+        // notreAi.jouer(4, "D8");
+        // grilleCadres[1][0].setSymboleCaseAtIndex(0, 0, 2);
+        // grilleCadres[1][0].setSymboleCaseAtIndex(2, 2, 2);
+        // Minimax minimaxTree = new Minimax(2, grilleCadres);
+        // minimaxTree.genererMeilleurDecision("D5");
+        // Cadre cadreMilieu = grilleCadres[1][1]; //Cadre du milieu
+        // cadreMilieu.setSymboleCaseAtIndex(2, 2, 4); //F6
+        // cadreMilieu.setSymboleCaseAtIndex(1, 2, 2); //F5
+        // cadreMilieu.printBoard();
 
-        JeuUtils.caseIndexMapper(positionsDictionnary, grilleCadres); //init dictionnaire et grille
-
-        Cadre cadreMilieu = grilleCadres[1][1]; //Cadre du milieu
-        cadreMilieu.setSymboleCaseAtIndex(2, 2, 4); //F6
-        cadreMilieu.setSymboleCaseAtIndex(1, 2, 2); //F5
-        cadreMilieu.printBoard();
-
-        MinmaxTree mTree = new MinmaxTree(2, cadreMilieu);
-        mTree.createTree();
-        Node root = mTree.rootNode;
-        root.decision = "F6";
-        System.out.println(JeuUtils.ANSI_GREEN+root.decision+JeuUtils.ANSI_RESET);
+        // MinmaxTree mTree = new MinmaxTree(2, cadreMilieu);
+        // mTree.createTree();
+        // Node root = mTree.rootNode;
+        // root.decision = "F6";
+        // System.out.println(JeuUtils.ANSI_GREEN+root.decision+JeuUtils.ANSI_RESET);
     
        // Node rootChild1 = root.children.get(0);
 
@@ -79,7 +90,7 @@ public class TEST {
 
         //mTree. minimaxAlphaBeta(root, -100, 100);
         //mTree.determinTicTacToe(root);
-        JeuUtils.detailsNode(root);
+        // JeuUtils.detailsNode(root);
         //System.out.println("RootChild1 score:"+ rootChild1.pointage);
 
        

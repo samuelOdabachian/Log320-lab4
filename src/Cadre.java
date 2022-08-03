@@ -68,4 +68,28 @@ public class Cadre extends AbstractComposantGrilleJeu {
         System.out.println(color + "Grid: " + Arrays.toString(this.index) + JeuUtils.ANSI_RESET); 
         System.out.println(color + printBoard + JeuUtils.ANSI_RESET); 
     }
+    public void printBoard(int idJoueur) {
+        String printBoard = "";
+        for (int i = cases.length - 1; i >= 0; i--) {
+            
+            for (int j = 0; j < cases[i].length; j++) {
+                printBoard += cases[i][j].getSymbole() + " ";
+            }
+            printBoard += "\n";
+        }
+        String color;
+        switch (idJoueur) {
+            case 2:
+                color = JeuUtils.ANSI_RED;
+                break;
+            case 4:
+                color = JeuUtils.ANSI_PURPLE;
+                break;
+            default:
+                color = JeuUtils.ANSI_RESET;
+                break;
+        }
+        System.out.println(color + "Grid: " + Arrays.toString(this.index) + JeuUtils.ANSI_RESET); 
+        System.out.println(color + printBoard + JeuUtils.ANSI_RESET); 
+    }
 }
