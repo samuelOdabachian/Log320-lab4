@@ -2,6 +2,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.swing.text.Position;
+
 /**
  * Cette arbre est responsable de creer les noeds recursivement en utilisant le
  * concept de minimax et elegage alpha beta.
@@ -17,8 +19,9 @@ public class MinmaxTree {
     int[] cadre;
     int symboleDuDernierJoeur;// X ou O.
     Node rootNode;
+    Cadre _etatCadre;
+    Case[] positions;
 
-    private Cadre _etatCadre;
 
     public MinmaxTree(int symboleDuDernierJoeur, Cadre cadre) {
         this.symboleDuDernierJoeur = symboleDuDernierJoeur;
@@ -31,19 +34,18 @@ public class MinmaxTree {
      * Ensuite évaluer le scénario possible en lui donnant un score.
      */
     public void createTree() {
-        Case[] positions = obtenirListeCoupsPossible();
+        positions = obtenirListeCoupsPossible();
 
         rootNode = new Node();
         rootNode.setSymbole(symboleDuDernierJoeur);
         rootNode.typeNode = "Max";
         rootNode.heuristiqueCounter = 0;
 
-        // for loop pour interoger le hashmap pour avoir info sur le cadre en question.
+        // for loop pour interoger le Cadre pour avoir info sur le cadre en question.
         for (int i = 0; i < positions.length; i++) {
             Integer value = positions[i].getSymbole();
             System.out.println(positions[i] + ": " + positions[i].getSymbole());
-            if (positions[i].getSymbole() == 0)
-                this.rootNode.put(positions[i].getId(), value);
+            this.rootNode.put(positions[i].getId(), value);
         }
         // creatChildren(rootNode);
         minimaxAlphaBeta(this.rootNode, -100, 100);
@@ -72,9 +74,11 @@ public class MinmaxTree {
     // Configurer le alpha et beta aussi
     private void creatChildren(Node node) {
         // Le cadre actuel dans le noed est un Hashmap
-        for (HashMap.Entry<String, Integer> entry : node.getMap().entrySet()) {
-            String key = entry.getKey();
-            Integer value = entry.getValue();
+        //for (HashMap.Entry<String, Integer> entry : node.getMap().entrySet()) {
+          for(int i = 0; i  < this.positions.length; i++){
+            
+            String key = positions[i].getId(); //entry.getKey();
+            Integer value = positions[i].getSymbole();//entry.getValue();
 
             // Si heuristique est atteind, donc areter la creation de l'arbre.
             if (value == 0 && node.heuristiqueCounter != 1) {
@@ -107,12 +111,14 @@ public class MinmaxTree {
      * @param b la valeur beta du noeud parent
      * @return le pointage que le noeud a reçu
      */
+   
     private int minimaxAlphaBeta(Node n, int a, int b) {
         Node nChild;
         String typeJoueur = n.typeNode;
         int score = 0;
         int bTemporaire = 0;
         int aTemporaire = 0;
+        
 
         // If the node has no score already then do scorecalculator.
         if (n.isLeaf == true || n.heuristiqueCounter == 2) {
@@ -123,7 +129,7 @@ public class MinmaxTree {
             } else {
                 score = scoreCalculator(n.array2DBoard(), n.symboleDuJoueurActuel, n.typeNode);
                 n.pointage = score;
-
+                
                 return score;
             }
 
@@ -133,14 +139,17 @@ public class MinmaxTree {
 
             aTemporaire = -100;
             // For every possible option in board.
-            for (HashMap.Entry<String, Integer> entry : n.getMap().entrySet()) {
-                String key = entry.getKey();
-                Integer value = entry.getValue();
-                if (value == 0 && n.heuristiqueCounter <= 2) {
+            for (HashMap.Entry<String, Integer> entry : n.etatCadre.entrySet()) {
+                String key = entry.getKey(); 
+                int value = entry.getValue();
+            
+            
+                if (value == 0 && n.heuristiqueCounter <= 1) {
                     nChild = n.creatAChild(key);
                     determinTicTacToe(nChild);
                     score = minimaxAlphaBeta(nChild, Math.max(a, aTemporaire), b);
                     aTemporaire = Math.max(aTemporaire, score);
+                    
                     if (aTemporaire >= b) {
                         n.alpha = aTemporaire;
                         n.pointage = aTemporaire;
@@ -157,10 +166,11 @@ public class MinmaxTree {
         } else if (typeJoueur.equals("Min")) {
 
             bTemporaire = 100;
-            for (HashMap.Entry<String, Integer> entry : n.getMap().entrySet()) {
-                String key = entry.getKey();
-                Integer value = entry.getValue();
-                if (value == 0 && n.heuristiqueCounter <= 2) {
+            for (HashMap.Entry<String, Integer> entry : n.etatCadre.entrySet()) {
+                String key = entry.getKey(); 
+                int value = entry.getValue();
+            
+                if (value == 0 && n.heuristiqueCounter <= 1) {
                     nChild = n.creatAChild(key);
                     determinTicTacToe(nChild);
                     score = minimaxAlphaBeta(nChild, a, Math.min(b, bTemporaire));
@@ -196,12 +206,14 @@ public class MinmaxTree {
 
         int score = lineairCalculator(board, joueurActuel, joueurAdverse);
         int sccoreSelonAdversaire = lineairCalculator(board, joueurAdverse, joueurActuel);
+        
 
         if (score <= sccoreSelonAdversaire && type.equals("Min")) {
             score = -1 * sccoreSelonAdversaire;
         } else if (score <= sccoreSelonAdversaire && type.equals("Max")) {
             score = sccoreSelonAdversaire;
         }
+        
         return score;
     }
 
@@ -258,9 +270,28 @@ public class MinmaxTree {
         // Verification Diagonal top right corner
         counter = 0;
         adversityCounter = 0;
-        int j = 0;
+        int j = 2;
         for (int i = 0; i < 3; i++) {
 
+            if (board[i][j] == joueurActuel) {
+                counter++;
+                if(i == 0 && j== 2 ){System.out.println(counter + "Joueur actuel= " + joueurActuel); }
+                if(i == 1 && j== 1 ){System.out.println(counter + "Should be 2 " + "Joueur actuel= " + joueurActuel); }
+            } else if (board[i][j] == joueurAdverse) {
+                adversityCounter++;
+            }
+            j--;
+        }
+        tempScore = compareScore(counter, adversityCounter, score);
+        if (tempScore != 0) {
+            score = tempScore;
+        }
+
+        // Verification Diagonal top left corner
+        counter = 0;
+        adversityCounter = 0;
+        j = 0;
+        for (int i = 0; i < 3; i++) {
             if (board[i][j] == joueurActuel) {
                 counter++;
             } else if (board[i][j] == joueurAdverse) {
@@ -272,23 +303,7 @@ public class MinmaxTree {
         if (tempScore != 0) {
             score = tempScore;
         }
-
-        // Verification Diagonal top left corner
-        counter = 0;
-        adversityCounter = 0;
-        j = 2;
-        for (int i = 0; i < 3; i++) {
-            if (board[i][j] == joueurActuel) {
-                counter++;
-            } else if (board[i][j] == joueurAdverse) {
-                adversityCounter++;
-            }
-            j--;
-        }
-        tempScore = compareScore(counter, adversityCounter, score);
-        if (tempScore != 0) {
-            score = tempScore;
-        }
+        System.out.println("This returned :" + score);
         return score;
     }
 
@@ -310,6 +325,7 @@ public class MinmaxTree {
             // un de notre. (gaspillage de tour)
             score = -1;
         }
+        
         return score;
     }
 

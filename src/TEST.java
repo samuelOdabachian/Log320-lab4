@@ -22,6 +22,7 @@ public class TEST {
         Cadre cadreMilieu = grilleCadres[1][1]; //Cadre du milieu
         cadreMilieu.setSymboleCaseAtIndex(2, 2, 4); //F6
         cadreMilieu.setSymboleCaseAtIndex(1, 2, 2); //F5
+        //cadreMilieu.setSymboleCaseAtIndex(0, 0, 4); //D6
         cadreMilieu.printBoard();
 
         MinmaxTree mTree = new MinmaxTree(2, cadreMilieu);
