@@ -29,6 +29,7 @@ public class TEST {
         mTree.createTree();
         Node root = mTree.rootNode;
         root.decision = "F6";
+        
         System.out.println(JeuUtils.ANSI_GREEN+root.decision+JeuUtils.ANSI_RESET);
     
        // Node rootChild1 = root.children.get(0);

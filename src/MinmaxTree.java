@@ -404,14 +404,14 @@ public class MinmaxTree {
      * @return
      */
     public String genererMeilleurDecision(Cadre cadre) {
-        int highestScore = this.rootNode.alpha;
+      int highestScore = this.rootNode.pointage;
 
-        Node bestChild = this.rootNode.children.get(0);
-        for (Node child : this.rootNode.children) {
-            if (child.alpha >= this.rootNode.alpha) {
-                bestChild = child;
-            }
-        }
+      Node bestChild = this.rootNode.children.get(0);
+      for (Node child : this.rootNode.children) {
+          if (child.pointage == this.rootNode.alpha) {
+              bestChild = child;
+          }
+      }
 
         System.out.println("BEST DECISION: " + bestChild.decision);
         // découper décision

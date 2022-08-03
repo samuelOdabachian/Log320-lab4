@@ -99,8 +99,16 @@ class Client {
     BufferedOutputStream output;
     int[][] board = new int[9][9];
 
+    int port = 100;
+    String host ="";
+    if (args.length == 2) {
+       port = Integer.parseInt(args[1]) ;
+     host = args[0];
+    }
+    
+
     try {
-      MyClient = new Socket("localhost", 8888);
+      MyClient = new Socket(host, port);
       input = new BufferedInputStream(MyClient.getInputStream());
       output = new BufferedOutputStream(MyClient.getOutputStream());
       BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
