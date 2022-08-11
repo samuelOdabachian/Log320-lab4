@@ -16,42 +16,6 @@ public class JeuUtils {
   public static final String ANSI_WHITE = "\u001B[37m";
   
   static final String COLUMN_IDENTIFIERS = "ABCDEFGHI";
-  // Les 3 cadres de bas sur le plateau de jeu
-  static final String[] cadreBasGauche = { "A1", "A2", "A3", "B1", "B2", "B3", "C1", "C2", "C3" };
-  static final String[] cadreBasMilieu = { "D1", "D2", "D3", "E1", "E2", "E3", "F1", "F2", "F3" };
-  static final String[] cadreBasDroite = { "G1", "G2", "G3", "H1", "H2", "H3", "I1", "I2", "I3" };
-
-  // Les 3 cadres de centre sur le plateau de jeu
-  static final String[] cadreGauche = { "A4", "A5", "A6", "B4", "B5", "B6", "C4", "C5", "C6" };
-  static final String[] cadreMilieu = { "D4", "D5", "D6", "E4", "E5", "E6", "F4", "F5", "F6" };
-  static final String[] cadreDroite = { "G4", "G5", "G6", "H4", "H5", "H6", "I4", "I5", "I6" };
-
-  // Les 3 cadres de haut sur le plateau de jeu
-  static final String[] cadreHautGauche = { "A7", "A8", "A9", "B7", "B8", "B9", "C7", "C8", "C9" };
-  static final String[] cadreHautMilieu = { "D7", "D8", "D9", "E7", "E8", "E9", "F7", "F8", "F9" };
-  static final String[] cadreHautDroite = { "G7", "G8", "G9", "H7", "H8", "H9", "I7", "I8", "I9" };
-
-  static final String[][][] CASES_GRILLE_JEU = {
-      { cadreBasGauche, cadreGauche, cadreHautGauche }, // colonne 1
-      { cadreBasMilieu, cadreMilieu, cadreHautMilieu }, // colonne 2
-      { cadreBasDroite, cadreDroite, cadreHautDroite } // colonne 3
-  };
-
-  public static int obtenirIdSymboleJoueur(String symboleJoueur) {
-    int idSymbole = -1;
-    switch (symboleJoueur) {
-      case "O":
-        idSymbole = 2;
-        break;
-      case "X":
-        idSymbole = 4;
-        break;
-      default:
-        break;
-    }
-
-    return idSymbole;
-  }
 
   public static String obtenirSymboleJoueur(int joueurId) {
     String signe = "ERREUR";
@@ -74,14 +38,42 @@ public class JeuUtils {
     return (joueurId == 2) ? 4 : 2;
   }
 
-  ////
-  public static int[][] DIRS = new int[][]{
+  public static int[][] AXES = new int[][]{
     {0, 1}, //ligne
     {1, 0}, //colonne
     {-1, 1}, //top down
     {1, 1}, //down top
   };
 
+  /**
+   * NON UTILISÉ
+   * Initialise un dictionnaire de cases dont
+   * les clés sont les codes des cases et les valeurs sont le symbole du joueur qui y a
+   * fait son coup ou 0.
+   * @return dictionnaire de cases
+   */
+  public static HashMap<String, Integer> initTab(){
+    HashMap<String, Integer> listeCases = new HashMap<String, Integer>();
+
+    for (int i = 1; i <= 9; i++) {
+      String codeCase = Character.toString( JeuUtils.COLUMN_IDENTIFIERS.charAt(i-1) );
+      for (int j = 1; j <= 9; j++) {
+        listeCases.put(codeCase + j, 0);
+      }
+    }
+    return listeCases;
+  }
+
+  /**
+   * Méthode qui prend en paramètre un dictionnaire et un tableau 4D, puis les remplis.
+   * Le tableau 4D est rempli de Cadres contenant des références à des objets Case
+   * Pour chaque cases créées, une entrée du dictionnaire est initialisée avec comme clé le
+   * code décrivant la position de la case et comme valeur, un tableau à 4 chiffres décrivant
+   * l'index de la case dans le tableau à 4 dimensions.
+   * 
+   * @param listeIndexCadresEtCases le dictionnaire où insérer les index des cases
+   * @param matriceCadres le tableau où insérer les références aux objets Cadres du jeu
+   */
   public static void caseIndexMapper(HashMap<String, int[]> listeIndexCadresEtCases, Cadre[][] matriceCadres) {
     
     for (int k = 3 - 1; k >= 0; k--) { // ligne cadre sur 3. 2 -> 1 -> 0
@@ -90,7 +82,6 @@ public class JeuUtils {
 
         Cadre cadre = new Cadre(new int[]{k, l});
         matriceCadres[k][l] = cadre;
-        // System.out.println("cadre: "+k+ " : "+l);
 
         for (int i = 3 - 1; i >= 0; i--) { // ligne case sur 3.
           
@@ -106,19 +97,41 @@ public class JeuUtils {
         }
       }
     }
-    // System.out.println(Arrays.toString(m));
   }
 
+  /**
+   * À partir du code d'une case, utilise le dictionnaire d'index pour retourner 
+   * le cadre contenant la case
+   * @param listeIndexCadresEtCases 
+   * @param matriceCadres 
+   * @param idCase code d'une case auquel appartient le cadre recherchée
+   * @return
+   */
   public static Cadre getCadreFromMapper(HashMap<String, int[]> listeIndexCadresEtCases, Cadre[][] matriceCadres, String idCase) {
     int[] index = listeIndexCadresEtCases.get(idCase);
     return matriceCadres[index[0]][index[1]];
   }
 
+  /**
+   * À partir du code d'une case, utilise le dictionnaire d'index pour retourner 
+   * le case
+   * @param listeIndexCadresEtCases
+   * @param matriceCadres
+   * @param idCase code de la case recherchée
+   * @return
+   */
   public static Case getCaseFromMapper(HashMap<String, int[]> listeIndexCadresEtCases, Cadre[][] matriceCadres, String idCase) {
     int[] index = listeIndexCadresEtCases.get(idCase);
     return matriceCadres[index[0]][index[1]].getCases()[index[2]][index[3]];
   }
 
+  /**
+   * 
+   * @param cadre
+   * @param indexDansCadre
+   * @param symbole
+   * @return
+   */
   public static boolean estCoupGagnant(Cadre cadre, int[] indexDansCadre, int symbole) {
 
     // System.out.println("\n"+ANSI_GREEN+"Vérifier si coup gagnant");
@@ -128,29 +141,28 @@ public class JeuUtils {
     int dimensionCadre = cadre.getCases().length;
     int compteurCoups = 1;
     
-    for (int d = 0; d < DIRS.length && compteurCoups < 3; d++) { // 4 directions
+    for (int d = 0; d < AXES.length && compteurCoups < 3; d++) { // Itères sur les 4 axes statiques
 
-      int[] dir = DIRS[d];
+      int[] axe = AXES[d];
 
-      // System.out.println("Dir en cours:"+Arrays.toString(dir)+" || compteurCoups: "+compteurCoups+" - info = "+row+" :: "+col);
+      // System.out.println("axe en cours:"+Arrays.toString(axe)+" || compteurCoups: "+compteurCoups+" - info = "+row+" :: "+col);
       
-      if (d == 2 && (row + col != 2)) {
-        // System.out.println("- skip diago top down = "+row+" :: "+col);
-        continue;
+      if (d == 2 && (row + col != 2)) { 
+        continue; // Sauter la recherche de la diagonale du haut vers le bas \>
       }
       if (d == 3 && (row != col)) {
-        // System.out.println("- skip diago bottom top = "+row+" :: "+col);
-        break;
+        break;  // Interrompre la recherche de la diagonale du bas vers le haut />
       }
 
-      // Does all four directions possible for 1 hit
+      // Does all four axeections possible for 1 hit
+      // Peu importe la position du coup, itere sur les 3-1 autres (dimensionCadre-1) cases
+      // d'un axe. Interrompt l'exploration d'un axe si un coup de l'adversaire y est trouvé
       for (int c = 1; c < dimensionCadre && compteurCoups < 3; c++) {
         
-        int nextRow = dir[0] == 0 ? row : loopedJumpToNextIndex(dimensionCadre, row, c * dir[0]);
-        int nextCol = dir[1] == 0 ? col : loopedJumpToNextIndex(dimensionCadre, col, c * dir[1]);
+        int nextRow = axe[0] == 0 ? row : prochainIndexCase(dimensionCadre, row, c * axe[0]);
+        int nextCol = axe[1] == 0 ? col : prochainIndexCase(dimensionCadre, col, c * axe[1]);
 
         Case cetteCase = cadre.getCases()[nextRow][nextCol];
-        // System.out.println("- Case en cours: "+cetteCase.getId());
 
         if (cetteCase.getSymbole() == symbole) {
           compteurCoups++;
@@ -160,12 +172,17 @@ public class JeuUtils {
         }
       }
     }
-    // System.out.println("Coup gagnant: "+compteurCoups==3+ANSI_RESET);
     return compteurCoups == 3;
   }
 
-  public static int loopedJumpToNextIndex(int dimension, int currentIndex, int iteration) {
-    int nextIndex = currentIndex + iteration;
+  /**
+   * @param dimension nombre de cases sur un axe
+   * @param indexActuel index du coup joué
+   * @param iteration l'iteration actuelle multipliée par la direction 
+   * @return l'index de la prochaine case à vérifier.
+   */
+  public static int prochainIndexCase(int dimension, int indexActuel, int iteration) {
+    int nextIndex = indexActuel + iteration;
     if (nextIndex >= dimension)
       return nextIndex - dimension;
     else if (nextIndex < 0)
@@ -173,19 +190,12 @@ public class JeuUtils {
     else
       return nextIndex;
   }
-////
-  public static HashMap<String, Integer> initTab(){
-    HashMap<String, Integer> listeCases = new HashMap<String, Integer>();
 
-    for (int i = 1; i <= 9; i++) {
-      String codeCase = Character.toString( JeuUtils.COLUMN_IDENTIFIERS.charAt(i-1) );
-      for (int j = 1; j <= 9; j++) {
-        listeCases.put(codeCase + j, 0);
-      }
-    }
-    return listeCases;
-  }
-
+  /**
+   * Transforme un dictionnaire des cases en tableau 2D
+   * @param etatCadre
+   * @return
+   */
   public static int[][] mapTo2DArray(HashMap <String, Integer> etatCadre){
     int[][] board = new int[3][3];
     int caseNumber;
@@ -234,12 +244,11 @@ public class JeuUtils {
     }
     return board;
   }
+  
+
+  //--- Methodes imprimantes ---//
 
   public static void detailsNode(Node n){
-    int alphaBeta = 0;  
-    String type = "  ";
-    int[][] rootBoard = n.array2DBoard();
-
     System.out.println("Current Tree:   Parent node" + "\n");
     printBorad(n.array2DBoard());
     printDetails(n);

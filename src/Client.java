@@ -1,69 +1,15 @@
 import java.io.*;
 import java.net.*;
-import java.util.Arrays;
-import java.util.HashMap;
 
 class Client {
 
   private static boolean IS_AI_ACTIVE = true;
   private static final boolean ACTIVATE_SERVER_MODE = true;
 
-  private static final int CASE_VIDE = 0;
   private static final int SYMBOLE_O = 2;
   private static final int SYMBOLE_X = 4;
 
   private static int SYMBOLE_JOUEUR = -1;
-
-  private static void testCaseMapper() {
-    HashMap<String, int[]> listeIndexCadresEtCases = new HashMap<String, int[]>();
-    Cadre[][] m = new Cadre[3][3];
-
-    JeuUtils.caseIndexMapper(listeIndexCadresEtCases, m);
-    // HashMap<String, int[]> test = JeuUtils.caseIndexMapper();
-    System.out.println(m.length + " :: " + m[0].length);
-    // for (int i = 0; i < 3; i++) {
-    // for (int j = 0; j < 3; j++) {
-    // // System.out.println( Arrays.toString(m[i][j].getIndex()) );
-    // // System.out.println(m[i][j].getCases().length );
-    // }
-    // }
-    // int counter = 0;
-    // for (Cadre[] cadres : m) {
-    // for (Cadre cadre : cadres) {
-    // for (Case[] cases : cadre.getCases()) {
-    // for (Case uneCase : cases) {
-    // counter++;
-    // System.out.println(counter+" :: "+uneCase.getId());
-    // }
-    // }
-    // }
-    // }
-
-    System.out.println("FIND Cadre with C1");
-    // System.out.println(
-    // Arrays.toString(JeuUtils.getCadreFromMapper(listeIndexCadresEtCases, m,
-    // "D5").getIndex()) );
-    // System.out.println(
-    // Arrays.toString(JeuUtils.getCaseFromMapper(listeIndexCadresEtCases, m,
-    // "D5").getIndexDansCadre()) );
-    Cadre cadre = JeuUtils.getCadreFromMapper(listeIndexCadresEtCases, m, "C1");
-    Case case1 = JeuUtils.getCaseFromMapper(listeIndexCadresEtCases, m, "C1");
-    case1.setSymbole(2);
-    Case case2 = JeuUtils.getCaseFromMapper(listeIndexCadresEtCases, m, "A1");
-    case2.setSymbole(2);
-    Case case3 = JeuUtils.getCaseFromMapper(listeIndexCadresEtCases, m, "B3");
-    case3.setSymbole(2);
-
-    for (Case[] listeCases : cadre.getCases()) {
-      for (Case cetteCase : listeCases) {
-        System.out.println("Case " + cetteCase.getId());
-      }
-    }
-
-    Boolean estCoupGagnant = JeuUtils.estCoupGagnant(cadre, case1.getIndex(), 2);
-
-    System.out.println(estCoupGagnant);
-  }
 
   public static void main(String[] args) {
 
@@ -71,22 +17,9 @@ class Client {
       startGameOnServer(args);
     } else {
       System.out.println("TEST MODE");
-
       TicTacToeAI notreAI = new TicTacToeAI();
       SYMBOLE_JOUEUR = SYMBOLE_X;
-      // notreAI.jouer(SYMBOLE_JOUEUR, "C7");
-      // notreAI.jouer(SYMBOLE_JOUEUR, "E6");
-      // notreAI.jouer(SYMBOLE_JOUEUR, "A7");
-      // notreAI.jouer(SYMBOLE_JOUEUR, "C9");
       notreAI.jouer(SYMBOLE_JOUEUR, "B8");
-      // notreAI.jouer(SYMBOLE_JOUEUR, "A9");
-      // notreAI.rejouer();
-      // notreAI.rejouer();
-      // System.out.println("\n");
-
-      // MinmaxTree minmaxTree = new MinmaxTree();
-      // try to printout the tree during the creation instead of making a new methode.
-      // minmaxTree.creatTree(testCase, notreAI.getGrille());
     }
   }
 
@@ -99,13 +32,12 @@ class Client {
     BufferedOutputStream output;
     int[][] board = new int[9][9];
 
-    int port = 100;
-    String host ="";
+    int port = 8888;
+    String host = "localhost";
     if (args.length == 2) {
-       port = Integer.parseInt(args[1]) ;
-     host = args[0];
+      port = Integer.parseInt(args[1]);
+      host = args[0];
     }
-    
 
     try {
       MyClient = new Socket(host, port);

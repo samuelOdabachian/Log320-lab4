@@ -4,7 +4,6 @@ import java.util.HashMap;
 
 public class Node {
 
-    //A faire le alpha et le beta.
     HashMap <String, Integer> etatCadre = new HashMap<>();;
     int[][] board = null;
     ArrayList <Node> position;
@@ -37,8 +36,8 @@ public class Node {
         this.symboleDuJoueurActuel = symboleDuDernierJoeur;
     }
 
-    //Recopier le etat du cadre mais faire une seul changement dans d'une position pour dessiner un scenario potentiel. 
-    public Node creatAChild(String key){
+    //Recopier le etat du cadre mais faire une seul changement dans une d'une position pour dessiner un scenario potentiel. 
+    public Node createChild(String key){
         
         Node n = new Node(etatCadre,JeuUtils.obtenirIdSymboleAdverse(this.symboleDuJoueurActuel));
         n.replace(key, n.symboleDuJoueurActuel);
@@ -73,7 +72,6 @@ public class Node {
     public int[][] array2DBoard(){
         return this.board = JeuUtils.mapTo2DArray(this.etatCadre);
     }
-
 
     //A être setter a chaque fois qu'un nouveau niveau s'ajoute dans l'arbre.
     public void setSymbole(int symboleDuJoueurActuel){

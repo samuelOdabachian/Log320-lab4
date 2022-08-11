@@ -4,25 +4,12 @@ public class Cadre extends AbstractComposantGrilleJeu {
 
     private int[] index;
 
-    // private int gagnant = 0;
     private Case[][] cases = new Case[3][3];
 
     public Cadre(int[] index) {
         super(index);
         this.index = index;
     }
-
-    // public Cadre(Case[][] cases) {
-    //     this.cases = cases;
-    // }
-
-    // public int getGagnant() {
-    //     return gagnant;
-    // }
-
-    // public void setGagnant(int gagnant) {
-    //     this.gagnant = gagnant;
-    // }
 
     public void setCases(Case[][] cases) {
         this.cases = cases;
